@@ -21,7 +21,16 @@ class NavigationBar extends React.Component {
                                 <Link className="nav-link" to="/">Home</Link>
                             </NavItem>
                             <NavItem>
-                                <Link  className="nav-link" to="/episode">Episode</Link>
+                                <Link  className="nav-link" to="/product">Product</Link>
+                            </NavItem>
+                            <NavItem>
+                                <Link  className="nav-link" to="/category">Category</Link>
+                            </NavItem>
+                            <NavItem>
+                                <Link  className="nav-link" to="/user">ManageUser</Link>
+                            </NavItem>
+                            <NavItem>
+                                <Link  className="nav-link" to="/cart">ShoppingCart</Link>
                             </NavItem>
                         </Nav>
                     </Collapse>
