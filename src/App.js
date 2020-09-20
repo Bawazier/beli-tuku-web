@@ -3,9 +3,9 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 // import Home from './Pages/Home';
 import Product from './Admin/Pages/Product';
-// import Category from './Pages/Category';
-// import User from './Pages/User';
-// import Cart from './Pages/Cart';
+import User from './Admin/Pages/User';
+import Category from './Admin/Pages/Category';
+import Cart from './Admin/Pages/Cart';
 
 class App extends React.Component {
 	render() {
@@ -14,9 +14,9 @@ class App extends React.Component {
 				<Switch>
 					{/* <Route path="/" component={Home} exact /> */}
 					<Route path="/admin/product" component={Product} exact />
-					{/* <Route path="/category" component={Category} exact />
-					<Route path="/user" component={User} exact />
-					<Route path="/cart" component={Cart} exact /> }*/}
+					<Route path="/admin/user" component={User} exact />
+					<Route path="/admin/category" component={Category} exact />
+					<Route path="/admin/cart" component={Cart} exact />
 				</Switch>
 			</BrowserRouter>
 		)

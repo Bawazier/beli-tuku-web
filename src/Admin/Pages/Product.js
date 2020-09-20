@@ -13,6 +13,7 @@ import NavBar from '../Components/NavBar';
 import TableData from '../Components/TableData';
 
 import ProductService from '../Services/ProductService';
+import CategoryService from '../Services/CategoryService';
 
 class Product extends React.Component {
     constructor(props) {
@@ -24,6 +25,7 @@ class Product extends React.Component {
             price: '',
             category: '1',
             description: '',
+            dataCategoryId: [],
             key: [
                 'id',
                 'name',
@@ -45,6 +47,12 @@ class Product extends React.Component {
         }
     }
 
+    getCategoryId = () => {
+        CategoryService.getCategory().then(res => {
+            this.setState({dataCategoryId: res.data.data.map(item => item.id)});
+        })
+    }
+
     resetInput = () => {
         this.setState({
             id: 0,
@@ -62,7 +70,8 @@ class Product extends React.Component {
     }
 
     async componentDidMount() {
-        await this.getProduct()
+        await this.getProduct();
+        await this.getCategoryId();
     }
 
     getProduct = () => {
@@ -129,7 +138,7 @@ class Product extends React.Component {
         const price = parseInt(this.state.price);
         const categoryId = parseInt(this.state.category);
         const description = this.state.description;
-        console.log(name,price,categoryId,description);
+        console.log(name, price, categoryId, description);
         if (name.trim() && price && categoryId && description.trim()) {
             const product = {
                 name,
@@ -189,26 +198,26 @@ class Product extends React.Component {
                             <Label for="category" sm={2}>Category</Label>
                             <Col md={4}>
                                 <Input onChange={this.changeInput} type="select" name="category" id="category" required value={this.state.category}>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
+                                    {this.state.dataCategoryId.map(item => {
+                                        return(
+                                            <option>{item}</option>
+                                        )
+                                    })}
                                 </Input>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
                             <Col md={6} className="text-center">
-                                <Input type="submit" className="bg-success text-white font-weight-bol" size="lg" value={this.state.id > 0 ? "UPDATE" : "INSERT"}/>
+                                <Input type="submit" className="bg-success text-white font-weight-bold" size="lg" value={this.state.id > 0 ? "UPDATE" : "INSERT"} />
                             </Col>
                             <Col md={6} className="text-center">
-                                <Input type="reset" className="bg-secondary text-white font-weight-bol" size="lg" value="RESET" disabled={this.state.id > 0 ? false : true}/>
+                                <Input type="reset" className="bg-secondary text-white font-weight-bold" size="lg" value="RESET" disabled={this.state.id > 0 ? false : true} />
                             </Col>
                         </FormGroup>
-                        
+
                     </Form>
                 </Container>
-                <TableData list={this.state} delete={id => this.deleteProduct(id)} edit={id => this.getProductById(id)}/>
+                <TableData list={this.state} delete={id => this.deleteProduct(id)} edit={id => this.getProductById(id)} />
             </>
         )
     }
