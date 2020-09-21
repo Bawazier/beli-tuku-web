@@ -11,6 +11,7 @@ import {
 
 import NavBar from '../Components/NavBar';
 import TableData from '../Components/TableData';
+import Modals from '../Components/Modals';
 
 import ProductService from '../Services/ProductService';
 import CategoryService from '../Services/CategoryService';
@@ -26,6 +27,7 @@ class Product extends React.Component {
             category: '1',
             description: '',
             dataCategoryId: [],
+            modalOpen: false,
             key: [
                 'id',
                 'name',
@@ -45,6 +47,11 @@ class Product extends React.Component {
                 // 'Description'
             ]
         }
+        this.setToggleModal();
+    }
+
+    setToggleModal = () => {
+        this.setState({modalOpen: true});
     }
 
     getCategoryId = () => {
@@ -122,13 +129,18 @@ class Product extends React.Component {
     getProductById = (id) => {
         ProductService.getProductById(id).then(res => {
             this.resetInput();
-            this.setState({
-                id: res.data.data[0].id,
-                name: res.data.data[0].name,
-                price: res.data.data[0].price,
-                category: res.data.data[0].categoryId,
-                description: res.data.data[0].description
-            });
+            this.state.dataCategoryId.map(item => {
+                if(item === res.data.data[0].category_id){
+                    this.setState({
+                        id: res.data.data[0].id,
+                        name: res.data.data[0].name,
+                        price: res.data.data[0].price,
+                        category: res.data.data[0].category_id,
+                        description: res.data.data[0].description
+                    });
+                }
+                return console.log(item === res.data.data[0].category_id);
+            })
         });
     }
 
@@ -193,7 +205,7 @@ class Product extends React.Component {
                         <FormGroup row>
                             <Label for="price" sm={2}>Price</Label>
                             <Col md={4}>
-                                <Input onChange={this.changeInput} type="text" name="price" id="price" required value={this.state.price} />
+                                <Input onChange={this.changeInput} type="number" name="price" id="price" required value={this.state.price} />
                             </Col>
                             <Label for="category" sm={2}>Category</Label>
                             <Col md={4}>
@@ -217,7 +229,8 @@ class Product extends React.Component {
 
                     </Form>
                 </Container>
-                <TableData list={this.state} delete={id => this.deleteProduct(id)} edit={id => this.getProductById(id)} />
+                <TableData list={this.state} delete={id => this.deleteProduct(id)} edit={id => this.getProductById(id)} detail={this.state.setToggleModal} />
+                <Modals modal={this.state.modalOpen} toggle={this.setToggleModal}/>
             </>
         )
     }

@@ -29,7 +29,7 @@ class TableData extends React.Component {
                                     <td>
                                         <Button size="sm" color="warning" onClick={() => this.props.edit(item[key[0]])}>EDIT</Button> &nbsp;
                                         <Button size="sm" color="danger" onClick={() => this.props.delete(item[key[0]])}>DELETE</Button> &nbsp;
-                                        <Button size="sm" color="secondary" >DETAIL</Button>
+                                        <Button size="sm" color="secondary" onClick={() => this.props.detail}>DETAIL</Button>
                                     </td>
                                 </tr>
                             )
