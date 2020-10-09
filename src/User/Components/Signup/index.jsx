@@ -8,7 +8,7 @@ import {
   TextLink,
   NavLink,
   ButtonSubmit,
-} from "./LoginElements";
+} from "./SignupElements";
 
 import brandLogo from "../../Images/logo-w-156-h-50.svg";
 
@@ -35,9 +35,20 @@ export default () => {
           </RolesButton>
         </Col>
       </Row>
-      <Row className="mb-4 justify-content-center">
+      <Row className="justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
           <Form>
+            <FormGroup>
+              <Input
+                type="text"
+                className="form-control"
+                id="exampleFormControlInput1"
+                placeholder="Name"
+                bsSize="lg"
+                required
+                autofocus
+              />
+            </FormGroup>
             <FormGroup>
               <Input
                 type="email"
@@ -46,7 +57,6 @@ export default () => {
                 placeholder="Email"
                 bsSize="lg"
                 required
-                autofocus
               />
             </FormGroup>
             <FormGroup>
@@ -62,11 +72,6 @@ export default () => {
           </Form>
         </Col>
       </Row>
-      <Row className="mb-4 justify-content-center text-right">
-        <Col xs={12} sm={10} md={8} lg={6}>
-          <NavLink to="/auth/forgot-password">Forgot Password</NavLink>
-        </Col>
-      </Row>
       <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
           <ButtonSubmit type="submit" className="btn btn-lg btn-block shadow">
@@ -76,8 +81,8 @@ export default () => {
       </Row>
       <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <TextLink>Don't have a Shoppe.id account?</TextLink>&nbsp;
-          <NavLink to="/auth/signup">Register</NavLink>
+          <TextLink>Already have a Shoppe.id account?</TextLink>&nbsp;
+          <NavLink to="/auth/login">Login</NavLink>
         </Col>
       </Row>
     </Container>
