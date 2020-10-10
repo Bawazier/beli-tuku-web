@@ -35,7 +35,7 @@ export default () => {
           </RolesButton>
         </Col>
       </Row>
-      <Row className="justify-content-center">
+      <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
           <Form>
             <FormGroup>

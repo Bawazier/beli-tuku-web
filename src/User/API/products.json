@@ -1,0 +1,124 @@
+{
+  "success": true,
+  "message": "find new products success",
+  "respone": [
+    {
+      "id": 7,
+      "user_id": 34,
+      "category_id": 30,
+      "conditions_id": 3,
+      "name": "Alexander Amosu Vanquish II Bespoke",
+      "price": 14260000,
+      "stock": 4,
+      "created_at": "2020-10-02T17:00:00.000Z",
+      "updated_at": "2020-10-02T17:00:00.000Z",
+      "description": "Jas mewah yang masuk dalam deretan harga jas termahal di dunia, salah satunya adalah produksi dari seorang desainer kelas atas, yakni Alexender Amosu. Ia membutuhkan waktu kurang lebih 80 jam untuk menyelesaikan sebuah setelan jas megah.\r\n\r\nAda sekitar 5.000 jahitan, 9 buah kancing bertahta emas 18 karat dan permata yang menjadikan jas ini sangat mewah. Tidak hanya itu, wol yang digunakan sebagai bahan jas ini adalah jenis langka, yakni vicuna dan qiviuk.\r\n\r\nDan, Alexender Amosu hanya membuat satu setelan jas untuk satu pelanggan saja. Nilai untuk satu setelan jas ini adalah US$ 101.860 atau sekitar Rp 1.426.000.000 yang nantinya jas mahal ini akan dikirim menggunakan mobil van anti peluru. ",
+      "rating": 0.5
+    },
+    {
+      "id": 8,
+      "user_id": 34,
+      "category_id": 30,
+      "conditions_id": 3,
+      "name": "World Wood Record Challenge Cup Suits",
+      "price": 2740000,
+      "stock": 12,
+      "created_at": "2020-10-02T17:00:00.000Z",
+      "updated_at": "2020-10-02T17:00:00.000Z",
+      "description": "Jas Loro Piana ini merupakan setelan jas mewah terbaik pada tahun 2012 karena terbuat dari bahan wol berkualitas tinggi. Diameter benang wol yang digunakan untuk membuat jas ini adalah 11 mikron",
+      "rating": 1
+    },
+    {
+      "id": 9,
+      "user_id": 34,
+      "category_id": 30,
+      "conditions_id": 3,
+      "name": "Stuart Hughes Diamond Edition ",
+      "price": 12500000,
+      "stock": 2,
+      "created_at": "2020-10-02T17:00:00.000Z",
+      "updated_at": "2020-10-02T17:00:00.000Z",
+      "description": "Pembuatan jas mewah ini memakan waktu sekitar 600 jam. Bahan yang digunakan untuk membuat jas ini berkualitas terbaik dan dipadukan dengan tahta permata sejumlah 480 buah.\r\n\r\nTotal semua permata yang digunakan pada jas ini jumlahnya 240 karat. Ukuran permata yang digunakan adalah 0,5 cts berkualitas VS2 berwarna G. Jas mewah produksi desainer ternama ini hanya ada 3 potong yang dijual senilai US$ 892.500 atau setara Rp 12.500.000.000. ",
+      "rating": 2
+    },
+    {
+      "id": 10,
+      "user_id": 34,
+      "category_id": 30,
+      "conditions_id": 3,
+      "name": "Brioni Vanquish II",
+      "price": 6020000,
+      "stock": 34,
+      "created_at": "2020-10-02T17:00:00.000Z",
+      "updated_at": "2020-10-02T17:00:00.000Z",
+      "description": "Brioni Vanquish II, merupakan koleksi jas dari desainer pakaian mewah asal Italia yang sudah memproduksi jas sejak 1945. Pada tahun 2008 perusahaan ini mulai membuat setelan jas mahal dan mewah yang mampu membuat semua orang tercengang.\r\n\r\nJas buatannya terbuat dari serat paling langka di dunia, yakni qiviuk, meruakan serat alami yang tak biasa dan vicuna yang hanya dicukur 3 tahun sekali. Letak kemewahan pada jas ini adalah jahitannya yang berlapis emas putih. Harga untuk satu setelan jas ini adalah senilai US$ 43.000 atau sekitar Rp 602.000.000. ",
+      "rating": 0
+    },
+    {
+      "id": 7,
+      "user_id": 34,
+      "category_id": 30,
+      "conditions_id": 3,
+      "name": "Alexander Amosu Vanquish II Bespoke",
+      "price": 14260000,
+      "stock": 4,
+      "created_at": "2020-10-02T17:00:00.000Z",
+      "updated_at": "2020-10-02T17:00:00.000Z",
+      "description": "Jas mewah yang masuk dalam deretan harga jas termahal di dunia, salah satunya adalah produksi dari seorang desainer kelas atas, yakni Alexender Amosu. Ia membutuhkan waktu kurang lebih 80 jam untuk menyelesaikan sebuah setelan jas megah.\r\n\r\nAda sekitar 5.000 jahitan, 9 buah kancing bertahta emas 18 karat dan permata yang menjadikan jas ini sangat mewah. Tidak hanya itu, wol yang digunakan sebagai bahan jas ini adalah jenis langka, yakni vicuna dan qiviuk.\r\n\r\nDan, Alexender Amosu hanya membuat satu setelan jas untuk satu pelanggan saja. Nilai untuk satu setelan jas ini adalah US$ 101.860 atau sekitar Rp 1.426.000.000 yang nantinya jas mahal ini akan dikirim menggunakan mobil van anti peluru. ",
+      "rating": 0.5
+    },
+    {
+      "id": 8,
+      "user_id": 34,
+      "category_id": 30,
+      "conditions_id": 3,
+      "name": "World Wood Record Challenge Cup Suits",
+      "price": 2740000,
+      "stock": 12,
+      "created_at": "2020-10-02T17:00:00.000Z",
+      "updated_at": "2020-10-02T17:00:00.000Z",
+      "description": "Jas Loro Piana ini merupakan setelan jas mewah terbaik pada tahun 2012 karena terbuat dari bahan wol berkualitas tinggi. Diameter benang wol yang digunakan untuk membuat jas ini adalah 11 mikron",
+      "rating": 1
+    },
+    {
+      "id": 9,
+      "user_id": 34,
+      "category_id": 30,
+      "conditions_id": 3,
+      "name": "Stuart Hughes Diamond Edition ",
+      "price": 12500000,
+      "stock": 2,
+      "created_at": "2020-10-02T17:00:00.000Z",
+      "updated_at": "2020-10-02T17:00:00.000Z",
+      "description": "Pembuatan jas mewah ini memakan waktu sekitar 600 jam. Bahan yang digunakan untuk membuat jas ini berkualitas terbaik dan dipadukan dengan tahta permata sejumlah 480 buah.\r\n\r\nTotal semua permata yang digunakan pada jas ini jumlahnya 240 karat. Ukuran permata yang digunakan adalah 0,5 cts berkualitas VS2 berwarna G. Jas mewah produksi desainer ternama ini hanya ada 3 potong yang dijual senilai US$ 892.500 atau setara Rp 12.500.000.000. ",
+      "rating": 2
+    },
+    {
+      "id": 10,
+      "user_id": 34,
+      "category_id": 30,
+      "conditions_id": 3,
+      "name": "Brioni Vanquish II",
+      "price": 6020000,
+      "stock": 34,
+      "created_at": "2020-10-02T17:00:00.000Z",
+      "updated_at": "2020-10-02T17:00:00.000Z",
+      "description": "Brioni Vanquish II, merupakan koleksi jas dari desainer pakaian mewah asal Italia yang sudah memproduksi jas sejak 1945. Pada tahun 2008 perusahaan ini mulai membuat setelan jas mahal dan mewah yang mampu membuat semua orang tercengang.\r\n\r\nJas buatannya terbuat dari serat paling langka di dunia, yakni qiviuk, meruakan serat alami yang tak biasa dan vicuna yang hanya dicukur 3 tahun sekali. Letak kemewahan pada jas ini adalah jahitannya yang berlapis emas putih. Harga untuk satu setelan jas ini adalah senilai US$ 43.000 atau sekitar Rp 602.000.000. ",
+      "rating": 0
+    }
+  ],
+  "imagesPrimary": [
+    {
+      "id_product": 7,
+      "URL_image": "http://localhost:5000//asset/upload/AsfMW8I%2FAAAAAAAAAE4%2FBIsYsAxlcQs%2Fs1600%2Furl.jpg"
+    },
+    {
+      "id_product": 8,
+      "URL_image": "http://localhost:5000//asset/upload/AsfMW8I.jpg"
+    },
+    {
+      "id_product": 9,
+      "URL_image": "http://localhost:5000//asset/uploadAsfMW8I%2FAAAAAAAAAE4%2FBIsYsAxlcQ.jpg"
+    }
+  ]
+}
