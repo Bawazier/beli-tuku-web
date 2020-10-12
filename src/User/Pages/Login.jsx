@@ -1,13 +1,33 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import LoginComponents from '../Components/Login/index';
+import LoginComponents from "../Components/Login/index";
 
 export class Login extends Component {
-    render() {
-        return (
-            <LoginComponents />
-        )
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      isOpen: false,
+      roles: "",
+    };
+  }
+  toggle = () =>
+    this.setState({
+      isOpen: !this.state.isOpen,
+      roles: this.state.isOpen ? "Saller" : "Customer",
+    });
+  render() {
+    return (
+      <LoginComponents
+        onClick={this.toggle}
+        isOpen={this.state.isOpen}
+        email=""
+        emailOnChange=""
+        passwordOnChange=""
+        password=""
+        onSubmit={this.state.roles}
+      />
+    );
+  }
 }
 
-export default Login
+export default Login;

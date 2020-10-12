@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { Navbar, NavbarBrand, Button, Input } from "reactstrap";
+import { Navbar, NavbarBrand, Input } from "reactstrap";
+import { Link } from "react-router-dom"
 
 export const NavBar = styled(Navbar)`
   background: #ffffff;
@@ -23,7 +24,7 @@ export const SearchInput = styled(Input)`
   border-radius: 23px;
 `;
 
-export const SearchButton = styled(Button)`
+export const SearchButton = styled(Link)`
   background: #ffffff;
   border: 1px solid #8e8e93;
 `;
@@ -32,7 +33,7 @@ export const SearchIcon = styled.img`
   padding: 1px;
 `;
 
-export const FilterButton = styled(Button)`
+export const FilterButton = styled(Link)`
   background: #ffffff;
   border: 1px solid #8e8e93;
   border-radius: 12px;
@@ -47,7 +48,7 @@ export const ContainerBeforeLogin = styled.div`
   justify-content: between;
 `;
 
-export const CartButton = styled(Button)`
+export const CartButton = styled(Link)`
   background: #ffffff;
   border: none;
   border-radius: 12px;
@@ -56,7 +57,7 @@ export const CartButton = styled(Button)`
   }
 `;
 
-export const LoginButton = styled(Button)`
+export const LoginButton = styled(Link)`
   width: 100px;
   height: 36px;
   background: #32c33b;
@@ -67,7 +68,7 @@ export const LoginButton = styled(Button)`
   }
 `;
 
-export const SignupButton = styled(Button)`
+export const SignupButton = styled(Link)`
   width: 100px;
   height: 36px;
   background: #ffff;
@@ -85,4 +86,16 @@ export const TextButton = styled.span`
   font-size: 14px;
   line-height: 20px;
   color: ${(props) => (props.isLogin ? "#FFFFFF" : "#9B9B9B")};
+`;
+
+export const CircleButton = styled(Link)`
+display: flex;
+justify-content: center;
+width: 32px;
+overflow: hidden;
+`;
+
+export const Picture = styled.img`
+  width: 32px;
+height: 32px;
 `;

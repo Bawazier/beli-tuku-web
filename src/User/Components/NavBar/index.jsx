@@ -40,7 +40,7 @@ export default (props) => {
                   placeholder="Search..."
                 />
                 <div className="input-group-prepend">
-                  <SearchButton className="input-group-text rounded p-2">
+                  <SearchButton to="/" className="btn input-group-text rounded p-2">
                     <SearchIcon src={searchIcon} alt="" />
                   </SearchButton>
                 </div>
@@ -49,13 +49,13 @@ export default (props) => {
             <NavbarToggler onClick={toggle} />
             <Collapse isOpen={isOpen} navbar>
               <Col xs={2} sm={2} md={2} lg={1}>
-                <FilterButton>
+                <FilterButton to="/" className="btn">
                   <FilterIcon src={filterIcon} alt="" />
                 </FilterButton>
               </Col>
               <Col xs={2} sm={2} md={2} lg="auto" className="ml-auto">
-                <BeforeLogin isLogin={true}/>
-                <AfterLogin isLogin={false} profilePicture={props.profilePicture}/>
+                <BeforeLogin isLogin={!props.isLogin}/>
+                <AfterLogin isLogin={props.isLogin} profilePicture={props.profilePicture}/>
               </Col>
             </Collapse>
           </Row>

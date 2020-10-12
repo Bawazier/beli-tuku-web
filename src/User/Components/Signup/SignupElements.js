@@ -46,7 +46,7 @@ export const NavLink = styled(Link)`
   }
 `;
 
-export const ButtonSubmit = styled.button`
+export const ButtonSubmit = styled.input`
   background: #32c33b;
   color: #ffffff;
   border-radius: 25px;

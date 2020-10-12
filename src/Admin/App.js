@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 // import Home from './Pages/Home';
-import Product from './Admin/Pages/Product';
-import User from './Admin/Pages/User';
-import Category from './Admin/Pages/Category';
-import Cart from './Admin/Pages/Cart';
+import Product from './Pages/Product';
+import User from './Pages/User';
+import Category from './Pages/Category';
+import Cart from './Pages/Cart';
 
 class App extends React.Component {
 	render() {

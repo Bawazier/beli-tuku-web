@@ -12,7 +12,7 @@ import {
 
 import brandLogo from "../../Images/logo-w-156-h-50.svg";
 
-export default () => {
+export default (props) => {
   return (
     <Container className="text-center p-5">
       <Row className="mb-4 justify-content-center">
@@ -27,33 +27,47 @@ export default () => {
       </Row>
       <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <RolesButton type="button" isOpen={true} className="rounded-left">
+          <RolesButton
+            type="button"
+            onClick={props.onClick}
+            isOpen={!props.isOpen}
+            className="rounded-left"
+          >
             <TextRoles>Customer</TextRoles>
           </RolesButton>
-          <RolesButton type="button" isOpen={false} className="rounded-right">
+          <RolesButton
+            type="button"
+            onClick={props.onClick}
+            isOpen={props.isOpen}
+            className="rounded-right"
+          >
             <TextRoles>Saller</TextRoles>
           </RolesButton>
         </Col>
       </Row>
       <Row className="justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <Form>
+          <Form onSubmit={props.onSubmit}>
             <FormGroup>
               <Input
+                value={props.email}
+                onChange={props.emailOnChange}
                 type="email"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="email"
                 placeholder="Email"
                 bsSize="lg"
                 required
-                autofocus
+                autoFocus
               />
             </FormGroup>
             <FormGroup>
               <Input
+                value={props.password}
+                onChange={props.passwordOnChange}
                 type="password"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="password"
                 placeholder="Password"
                 bsSize="lg"
                 required

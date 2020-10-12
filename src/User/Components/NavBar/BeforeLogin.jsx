@@ -13,15 +13,15 @@ export default (props) => {
   return (
     <>
       <ContainerBeforeLogin isLogin={props.isLogin}>
-        <CartButton>
+        <CartButton to="/" className="btn">
           <img src={cartIcon} alt="" />
         </CartButton>
         &nbsp;
-        <LoginButton>
+        <LoginButton to="/auth/login" className="btn">
           <TextButton isLogin>Login</TextButton>
         </LoginButton>
         &nbsp;
-        <SignupButton>
+        <SignupButton to="/auth/signup" className="btn">
           <TextButton>Signup</TextButton>
         </SignupButton>
       </ContainerBeforeLogin>

@@ -12,7 +12,7 @@ import {
 
 import brandLogo from "../../Images/logo-w-156-h-50.svg";
 
-export default () => {
+export default (props) => {
   return (
     <Container className="text-center p-5">
       <Row className="mb-4 justify-content-center">
@@ -22,38 +22,54 @@ export default () => {
       </Row>
       <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <Message>Please login with your account</Message>
+          <Message>Please sign up with your account</Message>
         </Col>
       </Row>
       <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <RolesButton type="button" isOpen={true} className="rounded-left">
+          <RolesButton
+            type="button"
+            onClick={props.onClick}
+            isOpen={!props.isOpen}
+            className="rounded-left"
+          >
             <TextRoles>Customer</TextRoles>
           </RolesButton>
-          <RolesButton type="button" isOpen={false} className="rounded-right">
+          <RolesButton
+            type="button"
+            onClick={props.onClick}
+            isOpen={props.isOpen}
+            className="rounded-right"
+          >
             <TextRoles>Saller</TextRoles>
           </RolesButton>
         </Col>
       </Row>
       <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <Form>
+          <Form onSubmit={props.onSubmit}>
             <FormGroup>
               <Input
+                value={props.name}
+                onChange={props.nameOnChange}
                 type="text"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="name"
+                name="name"
                 placeholder="Name"
                 bsSize="lg"
                 required
-                autofocus
+                autoFocus
               />
             </FormGroup>
             <FormGroup>
               <Input
+                value={props.email}
+                onChange={props.emailOnChange}
                 type="email"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="email"
+                name="email"
                 placeholder="Email"
                 bsSize="lg"
                 required
@@ -61,22 +77,27 @@ export default () => {
             </FormGroup>
             <FormGroup>
               <Input
+                value={props.password}
+                onChange={props.passwordOnChange}
                 type="password"
                 className="form-control"
-                id="exampleFormControlInput1"
+                id="password"
+                name="password"
                 placeholder="Password"
                 bsSize="lg"
                 required
               />
             </FormGroup>
+            <Row className="mb-4 justify-content-center">
+              <Col xs={12} sm={10} md={8} lg={6}>
+                <ButtonSubmit
+                  type="submit"
+                  className="btn btn-lg btn-block shadow"
+                  value="Submit"
+                />
+              </Col>
+            </Row>
           </Form>
-        </Col>
-      </Row>
-      <Row className="mb-4 justify-content-center">
-        <Col xs={12} sm={10} md={8} lg={6}>
-          <ButtonSubmit type="submit" className="btn btn-lg btn-block shadow">
-            Submit{" "}
-          </ButtonSubmit>
         </Col>
       </Row>
       <Row className="mb-4 justify-content-center">
