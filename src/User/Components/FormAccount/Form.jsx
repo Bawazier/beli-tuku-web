@@ -1,15 +1,21 @@
 import React from "react";
-import { Row, Col, Form, FormGroup, Label, Input } from "reactstrap";
+import { Row, Col, Form, FormGroup, Label, Input, Button } from "reactstrap";
 
-export default () => {
+export default (props) => {
   return (
-    <Form>
+    <Form onSubmit={props.onSubmit}>
       <FormGroup row>
         <Label for="name" xs={3}>
           Name
         </Label>
         <Col xs={9}>
-          <Input type="text" name="name" id="name" />
+          <Input
+            type="text"
+            name="name"
+            id="name"
+            onChange={props.onChange}
+            value={props.nameValue}
+          />
         </Col>
       </FormGroup>
       <FormGroup row>
@@ -17,7 +23,13 @@ export default () => {
           Email
         </Label>
         <Col xs={9}>
-          <Input type="email" name="email" id="email" />
+          <Input
+            type="email"
+            name="email"
+            id="email"
+            onChange={props.onChange}
+            value={props.emailValue}
+          />
         </Col>
       </FormGroup>
       <FormGroup row>
@@ -25,7 +37,13 @@ export default () => {
           Phone Number
         </Label>
         <Col xs={9}>
-          <Input type="number" name="phoneNumber" id="phoneNumber" />
+          <Input
+            type="number"
+            name="phone"
+            id="phoneNumber"
+            onChange={props.onChange}
+            value={props.phoneValue}
+          />
         </Col>
       </FormGroup>
       <Row form className="align-items-center">
@@ -33,18 +51,19 @@ export default () => {
           Gender
         </Label>
         <Col xs={4}>
-          <FormGroup check>
-            <Label check>
-              <Input type="radio" name="gender" /> Male
-            </Label>
-          </FormGroup>
-        </Col>
-        <Col xs={4}>
-          <FormGroup check>
-            <Label check>
-              <Input type="radio" name="gender" /> Female
-            </Label>
-          </FormGroup>
+          {["Male", "Female"].map((item, index) => (
+            <FormGroup check>
+              <Label check className={index === 0 ? "ml-1" : "ml-5"}>
+                <Input
+                  type="radio"
+                  name="gender"
+                  onChange={props.onChange}
+                  checked={item === props.genderChecked}
+                />{" "}
+                <span>{item}</span>
+              </Label>
+            </FormGroup>
+          ))}
         </Col>
       </Row>
       <FormGroup row>
@@ -52,9 +71,22 @@ export default () => {
           Date Of Birth
         </Label>
         <Col xs={9}>
-          <Input type="date" name="dateOfBirth" id="dateOfBirth" />
+          <Input
+            type="date"
+            name="dateOfBirth"
+            id="dateOfBirth"
+            onChange={props.onChange}
+            value={props.dateOfBirthValue}
+          />
         </Col>
       </FormGroup>
+      <Row>
+        <Col xs={{ size: 9, offset: 3 }}>
+          <Button type="submit" color="success" size="lg" block>
+            Save
+          </Button>
+        </Col>
+      </Row>
     </Form>
   );
 };

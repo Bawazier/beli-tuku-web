@@ -1,5 +1,11 @@
 import styled from "styled-components";
-import { Navbar, NavbarBrand, Input } from "reactstrap";
+import {
+  Navbar,
+  Input,
+  ButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+} from "reactstrap";
 import { Link } from "react-router-dom"
 
 export const NavBar = styled(Navbar)`
@@ -7,7 +13,7 @@ export const NavBar = styled(Navbar)`
   box-shadow: 0px 6px 40px rgba(173, 173, 173, 0.25);
 `;
 
-export const NavBarBrand = styled(NavbarBrand)``;
+export const NavBarBrand = styled(Link)``;
 
 export const Search = styled.div`
   width: auto;
@@ -88,14 +94,21 @@ export const TextButton = styled.span`
   color: ${(props) => (props.isLogin ? "#FFFFFF" : "#9B9B9B")};
 `;
 
-export const CircleButton = styled(Link)`
-display: flex;
-justify-content: center;
-width: 32px;
-overflow: hidden;
+export const Dropdown = styled(ButtonDropdown)``;
+
+export const CircleToggle = styled(DropdownToggle)`
+  display: flex;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
 `;
 
 export const Picture = styled.img`
-  width: 32px;
-height: 32px;
+  width: 24px;
+  height: 24px;
 `;
+
+export const MenuItem = styled(DropdownMenu)``;
+
+export const Item = styled(Link)``;

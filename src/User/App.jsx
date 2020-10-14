@@ -1,29 +1,48 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import {Provider} from "react-redux"
+import {connect} from "react-redux"
 
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import Register from "./Pages/Signup";
 import Profile from "./Pages/Profile";
 
-import store from './Redux/store';
+import PrivateRoute from "./Components/PrivateRoute/"
+
+import authAction from "./Redux/actions/auth"
 
 class App extends React.Component {
+  componentDidMount(){
+    if(localStorage.getItem("token")){
+      this.props.token(localStorage.getItem("token"))
+    }
+  }
   render() {
     return (
-      <Provider store={store}>
         <BrowserRouter>
           <Switch>
-            <Route path="/" component={Home} exact />
-            <Route path="/auth/login" component={Login} exact />
-            <Route path="/auth/signup" component={Register} exact />
-            <Route path="/profile/account" component={Profile} exact />
+            <PrivateRoute exact path="/profile/account">
+              <Profile />
+            </PrivateRoute>
+            <Route path="/" render={(props) => <Home {...props} />} exact />
+            <Route
+              path="/auth/login"
+              render={(props) => <Login {...props} />}
+              exact
+            />
+            <Route
+              path="/auth/signup"
+              render={(props) => <Register {...props} />}
+              exact
+            />
           </Switch>
         </BrowserRouter>
-      </Provider>
     );
   }
 }
 
-export default App;
+const mapDispatchToProps = {
+  token: authAction.setToken,
+};
+
+export default connect(null, mapDispatchToProps)(App);

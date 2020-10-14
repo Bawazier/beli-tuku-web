@@ -28,16 +28,22 @@ export class Signup extends Component {
   };
   handleOnSubmit = (event) => {
     event.preventDefault();
-    this.props.signup(
-      this.state.name,
-      this.state.email,
-      this.state.password
-    );
-    console.log(this.state);
+    const { name, email, password } = this.state
+    let data = {
+      name,
+      email,
+      password
+    }
+    if(name && email && password){
+      this.props.signup(data);
+    }
   };
   render() {
     return (
+      
       <SignupComponents
+      isError={this.props.customer.isError}
+      message={this.props.customer.alertMsg}
         onClick={this.toggle}
         isOpen={this.state.isOpen}
         name={this.state.name}

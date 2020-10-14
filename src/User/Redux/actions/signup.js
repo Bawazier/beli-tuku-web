@@ -1,16 +1,9 @@
-import { default as axios } from "axios"
+import http from "../../Helper/http";
+import qs from "querystring";
 
 export default {
-  signup: (roles, name, email, password) => ({
+  signup: (data) => ({
     type: "SIGNUP_CUSTOMER",
-    payload: axios.post({
-      method: "post",
-      url: "http://localhost:5000/auth/register/customer",
-      data: {
-        name: name,
-        email: email,
-        password: password,
-      },
-    }),
+    payload: http().post("auth/register/customer", qs.stringify(data)),
   }),
 };

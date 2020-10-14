@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col, Form, Input, FormGroup } from "reactstrap";
+import { Container, Row, Col, Form, Input, FormGroup, Alert } from "reactstrap";
 import {
   BrandLogo,
   Message,
@@ -45,6 +45,12 @@ export default (props) => {
           </RolesButton>
         </Col>
       </Row>
+      <Alert
+        color={props.isError ? "danger" : "success"}
+        isOpen={props.isError || props.message !== ""}
+      >
+        {props.message}
+      </Alert>
       <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
           <Form onSubmit={props.onSubmit}>

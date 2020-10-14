@@ -10,6 +10,7 @@ import ThumbnailsComponent from "../Components/Thumbnails/index";
 import HomeActions from "../Redux/actions/home";
 
 export class Home extends Component {
+
   componentDidMount() {
     this.props.productsNew();
     this.props.productsPopuler();
@@ -21,7 +22,12 @@ export class Home extends Component {
     const categories = this.props.categories;
     return (
       <>
-        <NavBarComponent isLogin={false} profilePicture="" />
+        <NavBarComponent
+        onClick={this.search}
+        onChange={this.handleInputChange}
+        search={this.state.search}
+          profilePicture=""
+        />
         <Container>
           <ThumbnailsComponent
             header="Category"
@@ -61,7 +67,7 @@ export class Home extends Component {
                     productsRatings={item.rating}
                     productsImages={news.imagesPrimary.map((i) =>
                       i.id_product === item.id ? i.URL_image : ""
-                    )}
+                    )[0]}
                   />
                 </Col>
               ))}
@@ -103,7 +109,7 @@ export class Home extends Component {
                     productsRatings={item.rating}
                     productsImages={populer.imagesPrimary.map((i) =>
                       i.id_product === item.id ? i.URL_image : ""
-                    )}
+                    )[0]}
                   />
                 </Col>
               ))}
@@ -134,13 +140,13 @@ export class Home extends Component {
 const mapStateToProps = (state) => ({
   new: state.productsNew,
   populer: state.productsPopuler,
-  categories: state.categories
+  categories: state.categories,
 });
 
 const mapDispatchToProps = {
   productsNew: HomeActions.new,
   productsPopuler: HomeActions.populer,
-  findCategories: HomeActions.findCategories
+  findCategories: HomeActions.findCategories,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

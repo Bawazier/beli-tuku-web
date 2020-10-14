@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { Container, Row, Col } from "reactstrap";
 
 
-import AccountComponents from "../Components/FormAccount/index";
-import NavbarComponents from "../Components/NavBar/index";
-import SidebarComponents from "../Components/SideBar/index";
+import AccountComponents from "../Components/FormAccount/";
+import NavbarComponents from "../Components/NavBar/";
+import SidebarComponents from "../Components/SideBar/";
 
 
 
@@ -15,11 +15,7 @@ export class Login extends Component {
         <NavbarComponents />
         <Container>
           <Row>
-            <Col
-              md={4}
-              lg={3}
-              className="mt-5"
-            >
+            <Col md={4} lg={3} className="mt-5">
               <SidebarComponents picture="" name="Johanes Mikael" />
             </Col>
             <Col
@@ -27,7 +23,7 @@ export class Login extends Component {
               lg={7}
               className="mt-5 p-5 align-self-center border rounded"
             >
-              <AccountComponents />
+              <AccountComponents token={this.props.login}/>
             </Col>
           </Row>
         </Container>

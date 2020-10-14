@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
+export const LinkLogo = styled(Link)``;
 export const BrandLogo = styled.img``;
 
 export const Message = styled.span`

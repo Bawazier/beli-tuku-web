@@ -18,15 +18,14 @@ export default (state = initialState, action) => {
           ...state,
           isLoading: false,
           isError: true,
-          alertMsg: "Signup Fail",
+          alertMsg: "Register Failled",
         };
       }
       case "GET_PRODUCTS_NEW_FULFILLED": {
-        const customer = state.data.concat(action.payload);
         return {
           ...state,
           isLoading: false,
-          data: customer,
+          data: action.payload.data,
         };
       }
       default: {

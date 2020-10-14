@@ -1,16 +1,20 @@
-import { default as axios } from "axios";
+import http from "../../Helper/http";
 
 export default {
   findCategories: () => ({
     type: "GET_CATEGORIES",
-    payload: axios.get("http://localhost:5000/home/categories"),
+    payload: http().get("home/categories"),
   }),
   new: () => ({
     type: "GET_PRODUCTS_NEW",
-    payload: axios.get("http://localhost:5000/home/products/new"),
+    payload: http().get("home/products/new"),
   }),
   populer: () => ({
     type: "GET_PRODUCTS_POPULER",
-    payload: axios.get("http://localhost:5000/home/products/populer"),
+    payload: http().get("home/products/populer"),
+  }),
+  search: (search) => ({
+    type: "SEARCH_PRODUCTS",
+    payload: http().get("home/products/search?search="+search),
   }),
 };

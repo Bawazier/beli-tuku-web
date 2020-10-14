@@ -8,6 +8,7 @@ import {
   TextLink,
   NavLink,
   ButtonSubmit,
+  LinkLogo,
 } from "./LoginElements";
 
 import brandLogo from "../../Images/logo-w-156-h-50.svg";
@@ -17,7 +18,9 @@ export default (props) => {
     <Container className="text-center p-5">
       <Row className="mb-4 justify-content-center">
         <Col xs={12} sm={10} md={8} lg={6}>
-          <BrandLogo src={brandLogo} alt="Shop.Id" />
+          <LinkLogo to="/">
+            <BrandLogo src={brandLogo} alt="Shop.Id" />
+          </LinkLogo>
         </Col>
       </Row>
       <Row className="mb-4 justify-content-center">
@@ -55,6 +58,7 @@ export default (props) => {
                 type="email"
                 className="form-control"
                 id="email"
+                name="email"
                 placeholder="Email"
                 bsSize="lg"
                 required
@@ -68,24 +72,28 @@ export default (props) => {
                 type="password"
                 className="form-control"
                 id="password"
+                name="password"
                 placeholder="Password"
                 bsSize="lg"
                 required
               />
             </FormGroup>
+            <Row className="mb-4 justify-content-center text-right">
+              <Col xs={12} sm={10} md={8} lg={6}>
+                <NavLink to="/auth/forgot-password">Forgot Password</NavLink>
+              </Col>
+            </Row>
+            <Row className="mb-4 justify-content-center">
+              <Col xs={12} sm={10} md={8} lg={6}>
+                <ButtonSubmit
+                  type="submit"
+                  className="btn btn-lg btn-block shadow"
+                >
+                  Submit{" "}
+                </ButtonSubmit>
+              </Col>
+            </Row>
           </Form>
-        </Col>
-      </Row>
-      <Row className="mb-4 justify-content-center text-right">
-        <Col xs={12} sm={10} md={8} lg={6}>
-          <NavLink to="/auth/forgot-password">Forgot Password</NavLink>
-        </Col>
-      </Row>
-      <Row className="mb-4 justify-content-center">
-        <Col xs={12} sm={10} md={8} lg={6}>
-          <ButtonSubmit type="submit" className="btn btn-lg btn-block shadow">
-            Submit{" "}
-          </ButtonSubmit>
         </Col>
       </Row>
       <Row className="mb-4 justify-content-center">

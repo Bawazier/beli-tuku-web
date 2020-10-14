@@ -1,41 +1,77 @@
-import React from "react";
-import { Row, Col, Button } from "reactstrap";
+import React, {Component} from "react";
+import { Row, Col } from "reactstrap";
+import { connect } from "react-redux";
 
 import Form from "./Form";
 import Picture from "./Picture";
-import styled from "styled-components";
 
-const ButtonSave = styled(Button)`
-  background: #db3022;
-  border-radius: 25px;
-`;
-const ButtonText = styled.span`
-  font-style: normal;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 20px;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: #ffffff;
-`;
+import ProfileActions from "../../Redux/actions/profile";
 
-export default () => {
-  return (
-    <>
-      <Row>
-        <Col xs={12} sm={12} md={8} lg={8}>
-          <Form />
-        </Col>
-        <Col xs={12} sm={12} md={4} lg={4}>
-          <Picture />
-        </Col>
-        <Col xs={12}>
-          <ButtonSave>
-            <ButtonText>Save</ButtonText>
-          </ButtonSave>
-        </Col>
-      </Row>
-    </>
-  );
+export class FormAccount extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      email: "",
+      phone: "",
+      gender: "",
+      dateOfBirth: "",
+    };
+  }
+  componentDidMount(){
+    console.log(this.props.auth.token);
+    this.props.findAccount(this.props.auth.token);
+  }
+  handleInputChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
+  updateAccount = async (event) => {
+    event.preventDefault();
+    const data = this.state
+    await this.props.updateAccount(this.props.auth.token, data);
+    this.props.findAccount();
+  }
+  render() {
+    const {isLoading, isError, alertMsg, data} = this.props.account
+    return (
+      <>
+        {isLoading && !isError && <div>Loading....</div>}
+        {!isLoading && isError && alertMsg !== "" && <div>{alertMsg}</div>}
+        {!isLoading && !isError && data.length && (
+          <Row>
+            <Col xs={12} sm={12} md={8} lg={8}>
+              <Form
+                onSubmit={this.updateAccount}
+                onChange={this.handleInputChange}
+                nameValue={data.name}
+                emailValue={data.email}
+                phoneValue={data.phone}
+                genderChecked={data.gender}
+                dateOfBirthValue={data.dateOfBirth}
+              />
+            </Col>
+            <Col xs={12} sm={12} md={4} lg={4}>
+              <Picture
+                profilePicture={data.picture !== null ? data.URL_image : ""}
+              />
+            </Col>
+          </Row>
+        )}
+      </>
+    );
+  }
 };
+
+const mapStateToProps = (state) => ({
+  account: state.account,
+  auth: state.authUser
+});
+
+const mapDispatchToProps = {
+  findAccount: ProfileActions.findAccount,
+  updateAccount: ProfileActions.updateAccount,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FormAccount);

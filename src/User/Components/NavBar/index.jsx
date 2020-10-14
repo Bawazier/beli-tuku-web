@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Container, Row, Col, NavbarToggler, Collapse } from "reactstrap";
 import {
   NavBar,
@@ -17,17 +18,38 @@ import brandIcon from "../../Images/logo-w-137-h-44.svg";
 import searchIcon from "../../Images/Search.svg";
 import filterIcon from "../../Images/filter-logo.svg";
 
+import authAction from "../../Redux/actions/auth"
+import HomeAction from "../../Redux/actions/home"
+
 export default (props) => {
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const handleInputChange = (e) => {
+    setSearch({
+      search: e.target.value,
+    });
+  };
+
+  const onSearch = (e) => {
+    e.preventDefault();
+    dispatch(HomeAction.search(search));
+    this.props.history.push("/home/search");
+  };
 
   const toggle = () => setIsOpen(!isOpen);
+  const logout = (e) => {
+    e.preventDefault();
+    dispatch(authAction.logout());
+  }
   return (
     <>
       <NavBar color="light" light expand="md">
         <Container>
           <Row className="w-100 align-items-center justify-content-between">
             <Col xs={4} sm={2} md={2} lg={2}>
-              <NavBarBrand href="/">
+              <NavBarBrand to="/">
                 <img src={brandIcon} alt="" />
               </NavBarBrand>
             </Col>
@@ -37,10 +59,16 @@ export default (props) => {
                   type="text"
                   className="form-control rounded p-3"
                   id="search"
+                  onChange={handleInputChange}
+                  value={this.state}
                   placeholder="Search..."
                 />
                 <div className="input-group-prepend">
-                  <SearchButton to="/" className="btn input-group-text rounded p-2">
+                  <SearchButton
+                    to="/"
+                    onClick={onSearch}
+                    className="btn input-group-text rounded p-2"
+                  >
                     <SearchIcon src={searchIcon} alt="" />
                   </SearchButton>
                 </div>
@@ -54,8 +82,12 @@ export default (props) => {
                 </FilterButton>
               </Col>
               <Col xs={2} sm={2} md={2} lg="auto" className="ml-auto">
-                <BeforeLogin isLogin={!props.isLogin}/>
-                <AfterLogin isLogin={props.isLogin} profilePicture={props.profilePicture}/>
+                <BeforeLogin isLogin={!localStorage.getItem("token")} />
+                <AfterLogin
+                  isLogin={localStorage.getItem("token")}
+                  profilePicture={props.profilePicture}
+                  isLogout={logout}
+                />
               </Col>
             </Collapse>
           </Row>
