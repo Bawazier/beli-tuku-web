@@ -3,6 +3,8 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import {connect} from "react-redux"
 
 import Home from "./Pages/Home";
+import Search from "./Pages/Search";
+import Category from "./Pages/Category";
 import Login from "./Pages/Login";
 import Register from "./Pages/Signup";
 import Profile from "./Pages/Profile";
@@ -19,24 +21,34 @@ class App extends React.Component {
   }
   render() {
     return (
-        <BrowserRouter>
-          <Switch>
-            <PrivateRoute exact path="/profile/account">
-              <Profile />
-            </PrivateRoute>
-            <Route path="/" render={(props) => <Home {...props} />} exact />
-            <Route
-              path="/auth/login"
-              render={(props) => <Login {...props} />}
-              exact
-            />
-            <Route
-              path="/auth/signup"
-              render={(props) => <Register {...props} />}
-              exact
-            />
-          </Switch>
-        </BrowserRouter>
+      <BrowserRouter>
+        <Switch>
+          <PrivateRoute exact path="/profile/account">
+            <Profile />
+          </PrivateRoute>
+          <Route path="/" render={(props) => <Home {...props} />} exact />
+          <Route
+            path="/auth/login"
+            render={(props) => <Login {...props} />}
+            exact
+          />
+          <Route
+            path="/auth/signup"
+            render={(props) => <Register {...props} />}
+            exact
+          />
+          <Route
+            path="/products/search"
+            render={(props) => <Search {...props} />}
+            exact
+          />
+          <Route
+            path="/products/category"
+            render={(props) => <Category {...props} />}
+            exact
+          />
+        </Switch>
+      </BrowserRouter>
     );
   }
 }

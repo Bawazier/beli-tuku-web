@@ -10,24 +10,19 @@ import ThumbnailsComponent from "../Components/Thumbnails/index";
 import HomeActions from "../Redux/actions/home";
 
 export class Home extends Component {
-
   componentDidMount() {
     this.props.productsNew();
     this.props.productsPopuler();
     this.props.findCategories();
   }
+
   render() {
     const news = this.props.new;
     const populer = this.props.populer;
     const categories = this.props.categories;
     return (
       <>
-        <NavBarComponent
-        onClick={this.search}
-        onChange={this.handleInputChange}
-        search={this.state.search}
-          profilePicture=""
-        />
+        <NavBarComponent profilePicture="" />
         <Container>
           <ThumbnailsComponent
             header="Category"
@@ -40,6 +35,7 @@ export class Home extends Component {
               categories.data.map((item) => (
                 <Col xs={6} sm={6} md={4} lg={3} className="mb-4">
                   <CategoryComponent
+                    id={item.id}
                     colors={item.color}
                     categoryName={item.name}
                     categoryImage={item.picture !== null ? item.URL_image : ""}
@@ -65,9 +61,11 @@ export class Home extends Component {
                     productsName={item.name}
                     productsPrice={item.price}
                     productsRatings={item.rating}
-                    productsImages={news.imagesPrimary.map((i) =>
-                      i.id_product === item.id ? i.URL_image : ""
-                    )[0]}
+                    productsImages={
+                      news.imagesPrimary.map((i) =>
+                        i.id_product === item.id ? i.URL_image : ""
+                      )[0]
+                    }
                   />
                 </Col>
               ))}
@@ -107,9 +105,11 @@ export class Home extends Component {
                     productsName={item.name}
                     productsPrice={item.price}
                     productsRatings={item.rating}
-                    productsImages={populer.imagesPrimary.map((i) =>
-                      i.id_product === item.id ? i.URL_image : ""
-                    )[0]}
+                    productsImages={
+                      populer.imagesPrimary.map((i) =>
+                        i.id_product === item.id ? i.URL_image : ""
+                      )[0]
+                    }
                   />
                 </Col>
               ))}

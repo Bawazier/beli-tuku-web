@@ -15,6 +15,10 @@ export default {
   }),
   search: (search) => ({
     type: "SEARCH_PRODUCTS",
-    payload: http().get("home/products/search?search="+search),
+    payload: http().get("home/products/search?search=" + search),
+  }),
+  byCategory: (id) => ({
+    type: "GET_PRODUCTS_CATEGORY",
+    payload: http().get("home/products/category/" + id),
   }),
 };

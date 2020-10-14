@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Container, Row, Col, NavbarToggler, Collapse } from "reactstrap";
 import {
   NavBar,
@@ -23,25 +24,25 @@ import HomeAction from "../../Redux/actions/home"
 
 export default (props) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   const handleInputChange = (e) => {
-    setSearch({
-      search: e.target.value,
-    });
+    setSearch(e.target.value);
   };
 
-  const onSearch = (e) => {
+  const onSearch = async (e) => {
     e.preventDefault();
-    dispatch(HomeAction.search(search));
-    this.props.history.push("/home/search");
+    await dispatch(HomeAction.search(search));
+    history.push("/products/search");
   };
 
   const toggle = () => setIsOpen(!isOpen);
-  const logout = (e) => {
+  const logout = async (e) => {
     e.preventDefault();
-    dispatch(authAction.logout());
+    await dispatch(authAction.logout());
+    history.push("/");
   }
   return (
     <>
@@ -60,7 +61,7 @@ export default (props) => {
                   className="form-control rounded p-3"
                   id="search"
                   onChange={handleInputChange}
-                  value={this.state}
+                  value={search}
                   placeholder="Search..."
                 />
                 <div className="input-group-prepend">

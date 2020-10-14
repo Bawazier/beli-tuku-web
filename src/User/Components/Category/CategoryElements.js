@@ -1,4 +1,7 @@
 import styled from 'styled-components';
+import {Link} from 'react-router-dom';
+
+export const LinkCard = styled(Link)``;
 
 export const TextCategory = styled.h1`
   font-style: normal;
