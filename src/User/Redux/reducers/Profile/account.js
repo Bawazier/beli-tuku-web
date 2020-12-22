@@ -1,53 +1,89 @@
 const initialState = {
   data: [],
   isLoading: false,
-  isError: false,
-  alertMsg: "",
+  alertMsg: '',
+
+  isGetError: false,
+  isUpdateError: false,
+  isChangePassError: false,
+  isChangePassLoading: false,
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case "FIND_ACCOUNT_PENDING": {
+    case 'CHANGE_PASSWORD_PENDING': {
+      return {
+        ...state,
+        isChangePassLoading: true,
+      };
+    }
+    case 'CHANGE_PASSWORD_REJECTED': {
+      return {
+        ...state,
+        isChangePassLoading: false,
+        isChangePassError: true,
+        alertMsg: action.payload,
+      };
+    }
+    case 'CHANGE_PASSWORD_FULFILLED': {
+      return {
+        ...state,
+        isChangePassLoading: false,
+        isChangePassError: false,
+      };
+    }
+    case 'CHANGE_PASSWORD_TRY': {
+      return {
+        ...state,
+        isChangePassLoading: false,
+        isChangePassError: false,
+      };
+    }
+    case 'GET_ACCOUNT_PENDING': {
       return {
         ...state,
         isLoading: true,
       };
     }
-    case "FIND_ACCOUNT_REJECTED": {
+    case 'GET_ACCOUNT_REJECTED': {
       return {
         ...state,
         isLoading: false,
-        isError: true,
-        alertMsg: "Load profile account Fail",
+        isGetError: true,
+        alertMsg: action.payload,
       };
     }
-    case "FIND_ACCOUNT_FULFILLED": {
+    case 'GET_ACCOUNT_FULFILLED': {
       return {
         ...state,
         isLoading: false,
-        data: action.payload.data.data,
+        isGetError: false,
+        data: action.payload.data.results,
       };
     }
-    case "UPDATE_ACCOUNT_PENDING": {
+    case 'UPDATE_ACCOUNT_PENDING': {
       return {
         ...state,
         isLoading: true,
       };
     }
-    case "UPDATE_ACCOUNT_REJECTED": {
+    case 'UPDATE_ACCOUNT_REJECTED': {
       return {
         ...state,
         isLoading: false,
-        isError: true,
-        alertMsg: "",
+        isUpdateError: true,
+        alertMsg: action.payload,
       };
     }
-    case "UPDATED_ACCOUNT_FULFILLED": {
+    case 'UPDATE_ACCOUNT_FULFILLED': {
       return {
         ...state,
         isLoading: false,
-        alertMsg: action.payload.data.message,
+        isUpdateError: false,
       };
+    }
+    case 'LOGOUT': {
+      return initialState;
     }
     default: {
       return state;
