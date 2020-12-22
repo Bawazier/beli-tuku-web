@@ -1,152 +1,152 @@
-import React, { Component } from "react";
-import { Container, Row, Col } from "reactstrap";
-import { connect } from "react-redux";
+import React from "react";
+import styled from "styled-components";
+import {
+  Container,
+  Row,
+  Col,
+  ListGroup,
+  ListGroupItem,
+  Input,
+  UncontrolledCarousel,
+} from "reactstrap";
 
-import NavBarComponent from "../Components/NavBar/index";
-import CategoryComponent from "../Components/Category/index";
-import CardComponent from "../Components/Card/index";
-import ThumbnailsComponent from "../Components/Thumbnails/index";
+//Components
+import Navigation from "../Components/Navigation";
+import CardProduct from "../Components/CardProduct";
 
-import HomeActions from "../Redux/actions/home";
+const Home = () => {
 
-export class Home extends Component {
-  componentDidMount() {
-    this.props.productsNew();
-    this.props.productsPopuler();
-    this.props.findCategories();
-  }
+  const items = [
+    {
+      src:
+        "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15ba800aa1d%20text%20%7B%20fill%3A%23555%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15ba800aa1d%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.921875%22%20y%3D%22218.3%22%3EFirst%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+    },
+    {
+      src:
+        "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15ba800aa20%20text%20%7B%20fill%3A%23444%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15ba800aa20%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23666%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22247.3203125%22%20y%3D%22218.3%22%3ESecond%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+    },
+    {
+      src:
+        "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15ba800aa21%20text%20%7B%20fill%3A%23333%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15ba800aa21%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23555%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22277%22%20y%3D%22218.3%22%3EThird%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+    },
+  ];
 
-  render() {
-    const news = this.props.new;
-    const populer = this.props.populer;
-    const categories = this.props.categories;
-    return (
-      <>
-        <NavBarComponent profilePicture="" />
-        <Container>
-          <ThumbnailsComponent
-            header="Category"
-            secondary="What are you currently looking for"
-          />
-          <Row>
-            {!categories.isLoading &&
-              !categories.isError &&
-              categories.data.length !== 0 &&
-              categories.data.map((item) => (
-                <Col xs={6} sm={6} md={4} lg={3} className="mb-4">
-                  <CategoryComponent
-                    id={item.id}
-                    colors={item.color}
-                    categoryName={item.name}
-                    categoryImage={item.picture !== null ? item.URL_image : ""}
-                  />
-                </Col>
-              ))}
-          </Row>
-        </Container>
-
-        <Container>
-          <ThumbnailsComponent
-            header="New"
-            secondary="You’ve never seen it before!"
-          />
-          <Row>
-            {!news.isLoading &&
-              !news.isError &&
-              news.data.length !== 0 &&
-              news.data.map((item) => (
-                <Col xs={6} sm={6} md={4} lg={3} className="mb-4">
-                  <CardComponent
-                    storeName="Store Name"
-                    productsName={item.name}
-                    productsPrice={item.price}
-                    productsRatings={item.rating}
-                    productsImages={
-                      news.imagesPrimary.map((i) =>
-                        i.id_product === item.id ? i.URL_image : ""
-                      )[0]
-                    }
-                  />
-                </Col>
-              ))}
-            {news.isLoading &&
-              !news.isError &&
-              [...Array(8)].map((item) => (
-                <Col xs={6} sm={6} md={4} lg={3} className="mb-4">
-                  <CardComponent
-                    storeName="Loading..."
-                    productsName="Loading..."
-                    productsPrice="Loading..."
-                    productsRatings="Loading..."
-                  />
-                </Col>
-              ))}
-            {news.isError && news.alertMsg !== "" && (
-              <Col xs={12} sm={12} md={12} lg={12} className="mb-4">
-                <div>{news.alertMsg}</div>
-              </Col>
-            )}
-          </Row>
-        </Container>
-
-        <Container>
-          <ThumbnailsComponent
-            header="Populer"
-            secondary="Find clothes that are trending recently"
-          />
-          <Row>
-            {!populer.isLoading &&
-              !populer.isError &&
-              populer.data.length !== 0 &&
-              populer.data.map((item) => (
-                <Col xs={6} sm={6} md={4} lg={3} className="mb-4">
-                  <CardComponent
-                    storeName="Store Name"
-                    productsName={item.name}
-                    productsPrice={item.price}
-                    productsRatings={item.rating}
-                    productsImages={
-                      populer.imagesPrimary.map((i) =>
-                        i.id_product === item.id ? i.URL_image : ""
-                      )[0]
-                    }
-                  />
-                </Col>
-              ))}
-            {populer.isLoading &&
-              !populer.isError &&
-              [...Array(8)].map((item) => (
-                <Col xs={6} sm={6} md={4} lg={3} className="mb-4">
-                  <CardComponent
-                    storeName="Loading..."
-                    productsName="Loading..."
-                    productsPrice="Loading..."
-                    productsRatings="Loading..."
-                  />
-                </Col>
-              ))}
-            {populer.isError && populer.alertMsg !== "" && (
-              <Col xs={12} sm={12} md={12} lg={12} className="mb-4">
-                <div>{populer.alertMsg}</div>
-              </Col>
-            )}
-          </Row>
-        </Container>
-      </>
-    );
-  }
-}
-
-const mapStateToProps = (state) => ({
-  new: state.productsNew,
-  populer: state.productsPopuler,
-  categories: state.categories,
-});
-
-const mapDispatchToProps = {
-  productsNew: HomeActions.new,
-  productsPopuler: HomeActions.populer,
-  findCategories: HomeActions.findCategories,
+  return (
+    <styles.Body>
+      <Navigation />
+      <styles.Container>
+        <styles.ContainerRow>
+          <Col xs={3} className="pl-0 ml-0">
+            <styles.List>
+              <ListGroup>
+                <styles.Item action>All Categories</styles.Item>
+                <ListGroupItem>T-Shirt</ListGroupItem>
+                <ListGroupItem>Short</ListGroupItem>
+                <ListGroupItem>Accessories</ListGroupItem>
+                <ListGroupItem>Shirt</ListGroupItem>
+              </ListGroup>
+            </styles.List>
+            <styles.SearchInput
+              className="border"
+              type="text"
+              name="search"
+              id="search"
+              placeholder="Search Categories"
+            />
+          </Col>
+          <Col xs={9}>
+            <UncontrolledCarousel items={items} />
+          </Col>
+        </styles.ContainerRow>
+        <styles.SectionRow>
+          <Col xs={2} className="pl-0 ml-0">
+            <styles.Secion>NEW PRODUCTS</styles.Secion>
+          </Col>
+          <Col xs={1} className="p-0 m-0">
+            <styles.Link src="#">View All</styles.Link>
+          </Col>
+        </styles.SectionRow>
+        <Row>
+          {[...Array(10)].map((item) => (
+            <Col className="mb-3">
+              <CardProduct />
+            </Col>
+          ))}
+        </Row>
+        <styles.SectionRow>
+          <Col xs={3} className="p-0 m-0">
+            <styles.Secion>POPULAR PRODUCTS</styles.Secion>
+          </Col>
+          <Col xs={1} className="p-0 m-0">
+            <styles.Link src="#">View All</styles.Link>
+          </Col>
+        </styles.SectionRow>
+        <Row>
+          {[...Array(10)].map((item) => (
+            <Col className="mb-3">
+              <CardProduct />
+            </Col>
+          ))}
+        </Row>
+      </styles.Container>
+    </styles.Body>
+  );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+const styles = {
+  Body: styled.body`
+    background-color: #c8d1da;
+  `,
+
+  Container: styled(Container)`
+    width: 80%;
+  `,
+
+  ContainerRow: styled(Row)`
+    align-items: center;
+    margin: 20px 0 0 0;
+  `,
+
+  List: styled.div`
+    width: 100%;
+    height: 350px;
+    background-color: #fff;
+  `,
+
+  Item: styled(ListGroupItem)`
+    background-color: #1bc29b;
+    color: #fff;
+  `,
+
+  SearchInput: styled(Input)`
+    width: 100%;
+    border-radius: 0;
+    border: 0;
+  `,
+
+  SectionRow: styled(Row)`
+    width: auto;
+    padding: 0;
+    margin: 40px 0 10px 0;
+    border-bottom: 1px solid #102939;
+    justify-content: space-between;
+    align-items: center;
+  `,
+
+  Secion: styled.div`
+    width: auto;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #102939;
+    color: #fff;
+  `,
+
+  Link: styled.a`
+    color: #1bc29b;
+    align-self: flex-end;
+  `,
+};
+
+export default Home;
