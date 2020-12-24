@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import {
   Container,
   Row,
@@ -32,8 +32,9 @@ const Home = () => {
   ];
 
   return (
-    <styles.Body>
+    <>
       <Navigation />
+      <styles.GlobalStyle />
       <styles.Container>
         <styles.ContainerRow>
           <Col xs={3} className="pl-0 ml-0">
@@ -89,13 +90,20 @@ const Home = () => {
           ))}
         </Row>
       </styles.Container>
-    </styles.Body>
+    </>
   );
 };
 
 const styles = {
-  Body: styled.body`
-    background-color: #c8d1da;
+  GlobalStyle: createGlobalStyle`
+    body {
+      background-color: #c8d1da;
+      margin:0;
+      padding:0;
+      line-height: 1.5em;
+      height: 100%;
+      width: 100%;
+    }
   `,
 
   Container: styled(Container)`

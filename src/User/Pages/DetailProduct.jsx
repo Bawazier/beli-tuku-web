@@ -1,5 +1,5 @@
 import React from "react";
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from "styled-components";
 import {Container, Row, Col, Button} from 'reactstrap';
 import numeral from "numeral";
 import StarRatingComponent from "react-star-rating-component";
@@ -9,8 +9,9 @@ import Navigation from "../Components/Navigation";
 
 const DetailProduct = () => {
   return (
-    <styles.Body>
+    <>
       <Navigation />
+      <styles.GlobalStyle />
       <styles.Container>
         <styles.ContainerRow>
           <Col xs={6} className="ml-0 pl-0">
@@ -159,13 +160,20 @@ const DetailProduct = () => {
           </div>
         </styles.SectionTitle>
       </styles.Container>
-    </styles.Body>
+    </>
   );
 };
 
 const styles = {
-  Body: styled.body`
-    background-color: #c8d1da;
+  GlobalStyle: createGlobalStyle`
+    body {
+      background-color: #c8d1da;
+      margin:0;
+      padding:0;
+      line-height: 1.5em;
+      height: 100%;
+      width: 100%;
+    }
   `,
 
   Container: styled(Container)`
