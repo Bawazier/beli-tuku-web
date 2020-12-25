@@ -1,5 +1,7 @@
 import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import {
   Container,
   Row,
@@ -12,6 +14,15 @@ import {
 } from "reactstrap";
 
 const Signup = () => {
+
+  const validationSchema = Yup.object({
+    name: Yup.string().max(80, "name cannot be too long").required(),
+    email: Yup.string().email("Input must be Email").required(),
+    password: Yup.string()
+      .min(8, "Password cannot be less than 8")
+      .required("Password is Required"),
+  });
+
   return (
     <>
       <styles.GlobalStyle />
@@ -45,44 +56,90 @@ const Signup = () => {
             xs={12}
             className="m-3 d-flex align-items-center justify-content-center"
           >
-            <Form className="w-50">
-              <FormGroup>
-                <Input
-                  type="text"
-                  className="form-control"
-                  id="name"
-                  name="name"
-                  placeholder="Name"
-                  bsSize="lg"
-                  required
-                  autoFocus
-                />
-              </FormGroup>
-              <FormGroup>
-                <Input
-                  type="email"
-                  className="form-control"
-                  id="email"
-                  name="email"
-                  placeholder="Email"
-                  bsSize="lg"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <Input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  name="password"
-                  placeholder="Password"
-                  bsSize="lg"
-                  required
-                />
-              </FormGroup>
-              <h6 className="text-warning text-right">&nbsp;</h6>
-              <styles.Button block>SIGNUP</styles.Button>
-            </Form>
+            <Formik
+              initialValues={{
+                name: "",
+                email: "",
+                password: "",
+              }}
+              validationSchema={validationSchema}
+              onSubmit={async (values) => {
+                const data = {
+                  name: values.name,
+                  email: values.email,
+                  password: values.password,
+                };
+                console.log(data);
+              }}
+            >
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+                touched,
+                values,
+                errors,
+              }) => (
+                <Form className="w-50" onSubmit={handleSubmit}>
+                  <FormGroup>
+                    <Input
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.name}
+                      type="text"
+                      className="form-control"
+                      id="name"
+                      name="name"
+                      placeholder="Name"
+                      required
+                      autoFocus
+                    />
+                    <h6 className="text-danger pt-2">
+                      {errors.name && touched.name ? errors.name : null}
+                    </h6>
+                  </FormGroup>
+                  <FormGroup>
+                    <Input
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.email}
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="Email"
+                      required
+                    />
+                    <h6 className="text-danger pt-2">
+                      {errors.email && touched.email ? errors.email : null}
+                    </h6>
+                  </FormGroup>
+                  <FormGroup>
+                    <Input
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.password}
+                      type="password"
+                      className="form-control"
+                      id="password"
+                      name="password"
+                      placeholder="Password"
+                      required
+                    />
+                    <h6 className="text-danger pt-2">
+                      {errors.password && touched.password
+                        ? errors.password
+                        : null}
+                    </h6>
+                  </FormGroup>
+                  <h6 className="text-warning text-right">&nbsp;</h6>
+                  <styles.Button block type="submit" disabled={isSubmitting}>
+                    SIGNUP
+                  </styles.Button>
+                </Form>
+              )}
+            </Formik>
           </Col>
           <Col
             xs={12}

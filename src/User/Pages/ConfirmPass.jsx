@@ -1,17 +1,28 @@
 import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import {
   Container,
   Row,
   Col,
   Button,
-  ButtonGroup,
   Form,
   Input,
   FormGroup,
 } from "reactstrap";
 
 const ConfirmPass = () => {
+
+  const validationSchema = Yup.object({
+    newPassword: Yup.string()
+      .min(8, "New Password cannot be less than 8")
+      .required("New Password is Required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("newPassword"), null], "Passwords not match")
+      .required("Password confirmation is required"),
+  });
+
   return (
     <>
       <styles.GlobalStyle />
@@ -44,32 +55,73 @@ const ConfirmPass = () => {
             xs={12}
             className="m-3 d-flex align-items-center justify-content-center"
           >
-            <Form className="w-50">
-              <FormGroup>
-                <Input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  name="password"
-                  placeholder="Password"
-                  bsSize="lg"
-                  required
-                />
-              </FormGroup>
-              <FormGroup>
-                <Input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  name="password"
-                  placeholder="Confirmation New Password"
-                  bsSize="lg"
-                  required
-                />
-              </FormGroup>
-              <h6 className="text-warning text-right">Forgot password ?</h6>
-              <styles.Button block>RESET</styles.Button>
-            </Form>
+            <Formik
+              initialValues={{
+                newPassword: "",
+                confirmPassword: "",
+              }}
+              validationSchema={validationSchema}
+              onSubmit={async (values) => {
+                const data = {
+                  newPassword: values.newPassword,
+                  confirmNewPassword: values.confirmPassword,
+                };
+                console.log(data);
+              }}
+            >
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+                touched,
+                values,
+                errors,
+              }) => (
+                <Form className="w-50" onSubmit={handleSubmit}>
+                  <FormGroup>
+                    <Input
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.newPassword}
+                      type="password"
+                      className="form-control"
+                      id="newPassword"
+                      name="newPassword"
+                      placeholder="New Password"
+                      required
+                    />
+                    <h6 className="text-danger pt-2">
+                      {errors.newPassword && touched.newPassword
+                        ? errors.newPassword
+                        : null}
+                    </h6>
+                  </FormGroup>
+                  <FormGroup>
+                    <Input
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.confirmPassword}
+                      type="password"
+                      className="form-control"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      placeholder="Confirmation New Password"
+                      required
+                    />
+                    <h6 className="text-danger pt-2">
+                      {errors.confirmPassword && touched.confirmPassword
+                        ? errors.confirmPassword
+                        : null}
+                    </h6>
+                  </FormGroup>
+                  <h6 className="text-warning text-right">Forgot password ?</h6>
+                  <styles.Button block type="submit" disabled={isSubmitting}>
+                    RESET
+                  </styles.Button>
+                </Form>
+              )}
+            </Formik>
           </Col>
         </Row>
       </styles.Container>

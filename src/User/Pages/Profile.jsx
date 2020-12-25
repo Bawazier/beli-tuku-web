@@ -117,12 +117,12 @@ const Profile = () => {
                 Manage your profile information
               </CardText>
               <CardBody>
-                {/* <FormProfile /> */}
+                <FormProfile />
                 {/* <styles.ButtonAddress>Add new address</styles.ButtonAddress>
                 <CardAddress /> */}
                 {/* <FormAddress /> */}
                 {/* <CardOrder /> */}
-                <CardTopup />
+                {/* <CardTopup /> */}
               </CardBody>
             </Card>
           </Col>

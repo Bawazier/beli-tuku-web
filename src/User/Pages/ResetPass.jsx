@@ -1,5 +1,7 @@
 import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import {
   Container,
   Row,
@@ -11,6 +13,13 @@ import {
 } from "reactstrap";
 
 const ResetPass = () => {
+
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email('Input must be Email')
+      .required('Email is Required'),
+  });
+
   return (
     <>
       <styles.GlobalStyle />
@@ -35,22 +44,52 @@ const ResetPass = () => {
             xs={12}
             className="m-3 d-flex align-items-center justify-content-center"
           >
-            <Form className="w-50">
-              <FormGroup>
-                <Input
-                  type="email"
-                  className="form-control"
-                  id="email"
-                  name="email"
-                  placeholder="Email"
-                  bsSize="lg"
-                  required
-                  autoFocus
-                />
-              </FormGroup>
-              <h6 className="text-warning text-right">Forgot password ?</h6>
-              <styles.Button block>SEND</styles.Button>
-            </Form>
+            <Formik
+              initialValues={{
+                email: "",
+              }}
+              validationSchema={validationSchema}
+              onSubmit={async (values) => {
+                const data = {
+                  email: values.email,
+                };
+                console.log(data);
+              }}
+            >
+              {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+                touched,
+                values,
+                errors,
+              }) => (
+                <Form className="w-50" onSubmit={handleSubmit}>
+                  <FormGroup>
+                    <Input
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.email}
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="Email"
+                      required
+                      autoFocus
+                    />
+                    <h6 className="text-danger pt-2">
+                      {errors.email && touched.email ? errors.email : null}
+                    </h6>
+                  </FormGroup>
+                  <h6 className="text-warning text-right">Forgot password ?</h6>
+                  <styles.Button block type="submit" disabled={isSubmitting}>
+                    SEND
+                  </styles.Button>
+                </Form>
+              )}
+            </Formik>
           </Col>
           <Col
             xs={12}
