@@ -4,14 +4,10 @@ import numeral from "numeral";
 
 const CardTopup = () => {
   return (
-    <Card body>
-      <Button>
-        <h4 className="text-success">
-          Credit: Rp.
+    <Card>
+        <h1 className="text-success font-weight-bold p-3">
           {numeral(2000000).format(0, 0).toString().replace(",", ".")}
-          ,-
-        </h4>
-      </Button>
+        </h1>
     </Card>
   );
 };

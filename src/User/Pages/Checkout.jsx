@@ -19,11 +19,13 @@ import numeral from "numeral";
 import Navigation from "../Components/Navigation";
 import CardAddress from "../Components/CardAddress";
 import FormAddress from "../Components/FormAddress";
+import CardTopup from "../Components/CardTopup";
 
 const Checkout = () => {
   const [addressOpen, setAddressOpen] = useState(false);
   const [changeAddressOpen, setChangeAddressOpen] = useState(false);
   const [addAddressOpen, setAddAddressOpen] = useState(false);
+  const [isTopupOpen, setIsTopupOpen] = useState(false);
 
   const toggle = () => setAddressOpen(!addressOpen);
   const toggleAddAddress = async () => {
@@ -34,11 +36,26 @@ const Checkout = () => {
     await setAddressOpen(!addressOpen);
     setChangeAddressOpen(!changeAddressOpen);
   };
+  const toggleTopupOpen = () => setIsTopupOpen(!isTopupOpen);
 
   return (
     <>
       <Navigation />
       <styles.GlobalStyle />
+      <Modal isOpen={isTopupOpen} toggle={toggleTopupOpen} size="lg">
+        <ModalBody>
+          <Card body>
+            <ModalHeader toggle={toggleTopupOpen}>
+              <CardTitle tag="h5" className="font-weight-bold text-center">
+                Top Up
+              </CardTitle>
+            </ModalHeader>
+            <CardBody>
+              <CardTopup />
+            </CardBody>
+          </Card>
+        </ModalBody>
+      </Modal>
       <Modal isOpen={addressOpen} toggle={toggle} size="lg">
         <ModalBody>
           <Card body>
@@ -99,7 +116,13 @@ const Checkout = () => {
                   Kabupaten Banyumas, Jawa Tengah, 53181 [Tokopedia Note: blok c
                   16] Sokaraja, Kab. Banyumas, 53181
                 </CardText>
-                <Button onClick={toggle}>Choose another address</Button>
+                <Button
+                  color="warning"
+                  className="font-weight-bold text-white"
+                  onClick={toggle}
+                >
+                  Choose another address
+                </Button>
               </Card>
             </styles.Section>
             <styles.Section>
@@ -109,7 +132,7 @@ const Checkout = () => {
                     <Row>
                       <Col xs={4} className="pr-0 mr-0">
                         <styles.Img
-                          src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15ba800aa1d%20text%20%7B%20fill%3A%23555%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15ba800aa1d%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.921875%22%20y%3D%22218.3%22%3EFirst%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
+                          src={require("../Assets/Images/PrimaryImage.png")}
                           alt="Card image cap"
                         />
                       </Col>
@@ -180,7 +203,7 @@ const Checkout = () => {
             <styles.Section>
               <Row>
                 <Col>
-                  <Button>SELECT PAYMENT</Button>
+                  <Button disabled>SELECT PAYMENT</Button>
                 </Col>
               </Row>
             </styles.Section>
@@ -202,10 +225,24 @@ const Checkout = () => {
             <styles.Section>
               <Row>
                 <Col>
-                  <Button>BUY BY CREDIT</Button>
+                  <Button
+                    block
+                    outline
+                    color="warning"
+                    className="font-weight-bold"
+                    onClick={toggleTopupOpen}
+                  >
+                    TOPUP
+                  </Button>
                 </Col>
                 <Col>
-                  <Button>TOPUP</Button>
+                  <Button
+                    block
+                    color="warning"
+                    className="font-weight-bold text-white"
+                  >
+                    BUY BY CREDIT
+                  </Button>
                 </Col>
               </Row>
             </styles.Section>
@@ -241,7 +278,7 @@ const styles = {
 
   Img: styled.img`
     width: 100%;
-    height: 100%;
+    height: 80px;
   `,
   ButtonAddress: styled(Button)`
     width: 100%;

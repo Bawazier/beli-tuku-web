@@ -186,10 +186,23 @@ const FormAddress = (props) => {
           </FormGroup>
           <Row className="align-items-center justify-content-end">
             <Col xs={2}>
-              <Button block>Cancel</Button>
+              <Button
+                block
+                outline
+                color="warning"
+                className="font-weight-bold"
+              >
+                Cancel
+              </Button>
             </Col>
             <Col xs={2}>
-              <Button block type="submit" disabled={isSubmitting}>
+              <Button
+                block
+                color="warning"
+                className="font-weight-bold text-white"
+                type="submit"
+                disabled={isSubmitting}
+              >
                 Save
               </Button>
             </Col>

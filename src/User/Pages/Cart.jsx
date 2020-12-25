@@ -67,7 +67,9 @@ const Cart = () => {
               </Row>
             </styles.Section>
             <styles.Section>
-              <Button>PROCEED TO CHECKOUT</Button>
+              <Button color="warning" className="font-weight-bold text-white">
+                PROCEED TO CHECKOUT
+              </Button>
             </styles.Section>
           </Col>
         </Row>

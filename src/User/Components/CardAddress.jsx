@@ -10,7 +10,13 @@ const CardAddress = (props) => {
         Banyumas, Jawa Tengah, 53181 [Tokopedia Note: blok c 16] Sokaraja, Kab.
         Banyumas, 53181
       </CardText>
-      <Button onClick={props.onChange}>Change address</Button>
+      <Button
+        color="warning"
+        className="font-weight-bold text-white"
+        onClick={props.onChange}
+      >
+        Change address
+      </Button>
     </Card>
   );
 };
