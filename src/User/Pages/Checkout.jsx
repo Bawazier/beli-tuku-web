@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import {
   Container,
@@ -8,17 +8,82 @@ import {
   Card,
   CardTitle,
   CardText,
+  CardBody,
+  Modal,
+  ModalBody,
+  ModalHeader,
 } from "reactstrap";
 import numeral from "numeral";
 
 //Components
 import Navigation from "../Components/Navigation";
+import CardAddress from "../Components/CardAddress";
+import FormAddress from "../Components/FormAddress";
 
 const Checkout = () => {
+  const [addressOpen, setAddressOpen] = useState(false);
+  const [changeAddressOpen, setChangeAddressOpen] = useState(false);
+  const [addAddressOpen, setAddAddressOpen] = useState(false);
+
+  const toggle = () => setAddressOpen(!addressOpen);
+  const toggleAddAddress = async () => {
+    await setAddressOpen(!addressOpen);
+    setAddAddressOpen(!addAddressOpen);
+  };
+  const toggleChangeAddress = async () => {
+    await setAddressOpen(!addressOpen);
+    setChangeAddressOpen(!changeAddressOpen);
+  };
+
   return (
     <>
       <Navigation />
       <styles.GlobalStyle />
+      <Modal isOpen={addressOpen} toggle={toggle} size="lg">
+        <ModalBody>
+          <Card body>
+            <ModalHeader toggle={toggle}>
+              <CardTitle tag="h5" className="font-weight-bold text-center">
+                Choose another address
+              </CardTitle>
+            </ModalHeader>
+            <CardBody>
+              <styles.ButtonAddress onClick={toggleAddAddress}>
+                Add new address
+              </styles.ButtonAddress>
+              <CardAddress onChange={toggleChangeAddress} />
+            </CardBody>
+          </Card>
+        </ModalBody>
+      </Modal>
+      <Modal isOpen={addAddressOpen} toggle={toggleAddAddress} size="lg">
+        <ModalBody>
+          <Card body>
+            <ModalHeader toggle={toggleAddAddress}>
+              <CardTitle tag="h5" className="font-weight-bold text-center">
+                Add new address
+              </CardTitle>
+            </ModalHeader>
+            <CardBody>
+              <FormAddress />
+            </CardBody>
+          </Card>
+        </ModalBody>
+      </Modal>
+      <Modal isOpen={changeAddressOpen} toggle={toggleChangeAddress} size="lg">
+        <ModalBody>
+          <Card body>
+            <ModalHeader toggle={toggleChangeAddress}>
+              <CardTitle tag="h5" className="font-weight-bold text-center">
+                Change address
+              </CardTitle>
+            </ModalHeader>
+            <CardBody>
+              <FormAddress />
+            </CardBody>
+          </Card>
+        </ModalBody>
+      </Modal>
       <styles.Container>
         <Row>
           <Col xs={8}>
@@ -34,7 +99,7 @@ const Checkout = () => {
                   Kabupaten Banyumas, Jawa Tengah, 53181 [Tokopedia Note: blok c
                   16] Sokaraja, Kab. Banyumas, 53181
                 </CardText>
-                <Button>Choose another address</Button>
+                <Button onClick={toggle}>Choose another address</Button>
               </Card>
             </styles.Section>
             <styles.Section>
@@ -177,6 +242,15 @@ const styles = {
   Img: styled.img`
     width: 100%;
     height: 100%;
+  `,
+  ButtonAddress: styled(Button)`
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 10px;
+    background-color: transparent;
+    border: 1px dashed black;
+    color: gray;
+    font-size: 24px;
   `,
 };
 

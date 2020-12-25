@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import {
   Container,
@@ -9,6 +9,9 @@ import {
   CardTitle,
   CardText,
   CardBody,
+  Modal,
+  ModalBody,
+  ModalHeader,
 } from "reactstrap";
 import numeral from "numeral";
 import {
@@ -29,10 +32,75 @@ import CardOrder from "../Components/CardOrder";
 import CardTopup from "../Components/CardTopup";
 
 const Profile = () => {
+  const [isProfileOpen, setIsProfileOpen] = useState(true);
+  const [isAddressOpen, setIsAddressOpen] = useState(false);
+  const [isOrderOpen, setIsOrderOpen] = useState(false);
+  const [isTopupOpen, setIsTopupOpen] = useState(false);
+  const [changeAddressOpen, setChangeAddressOpen] = useState(false);
+  const [addAddressOpen, setAddAddressOpen] = useState(false);
+
+  const toggleProfileOpen = async () => {
+    await setIsAddressOpen(false);
+    await setIsOrderOpen(false);
+    await setIsTopupOpen(false);
+    setIsProfileOpen(!isProfileOpen);
+  };
+  const toggleAddressOpen = async () => {
+    await setIsProfileOpen(false);
+    await setIsOrderOpen(false);
+    await setIsTopupOpen(false);
+    setIsAddressOpen(!isAddressOpen);
+  };
+  const toggleOrderOpen = async () => {
+    await setIsProfileOpen(false);
+    await setIsAddressOpen(false);
+    await setIsTopupOpen(false);
+    setIsOrderOpen(!isOrderOpen);
+  };
+  const toggleTopupOpen = async () => {
+    await setIsProfileOpen(false);
+    await setIsAddressOpen(false);
+    await setIsOrderOpen(false);
+    setIsTopupOpen(!isTopupOpen);
+  };
+  const toggleAddAddress = async () => {
+    setAddAddressOpen(!addAddressOpen);
+  };
+  const toggleChangeAddress = async () => {
+    setChangeAddressOpen(!changeAddressOpen);
+  };
   return (
     <>
       <Navigation />
       <styles.GlobalStyle />
+      <Modal isOpen={addAddressOpen} toggle={toggleAddAddress} size="lg">
+        <ModalBody>
+          <Card body>
+            <ModalHeader toggle={toggleAddAddress}>
+              <CardTitle tag="h5" className="font-weight-bold text-center">
+                Add new address
+              </CardTitle>
+            </ModalHeader>
+            <CardBody>
+              <FormAddress />
+            </CardBody>
+          </Card>
+        </ModalBody>
+      </Modal>
+      <Modal isOpen={changeAddressOpen} toggle={toggleChangeAddress} size="lg">
+        <ModalBody>
+          <Card body>
+            <ModalHeader toggle={toggleChangeAddress}>
+              <CardTitle tag="h5" className="font-weight-bold text-center">
+                Change address
+              </CardTitle>
+            </ModalHeader>
+            <CardBody>
+              <FormAddress />
+            </CardBody>
+          </Card>
+        </ModalBody>
+      </Modal>
       <styles.Container>
         <Row>
           <Col xs={3}>
@@ -62,7 +130,13 @@ const Profile = () => {
                     <styles.FaUserCircle />
                   </Col>
                   <Col xs={9}>
-                    <Button color="link">My Account</Button>
+                    <Button
+                      color="link"
+                      disabled={isProfileOpen}
+                      onClick={toggleProfileOpen}
+                    >
+                      My Account
+                    </Button>
                   </Col>
                 </Row>
               </styles.Section>
@@ -72,7 +146,13 @@ const Profile = () => {
                     <styles.FaMapMarkerAlt />
                   </Col>
                   <Col xs={9}>
-                    <Button color="link">Shipping Address</Button>
+                    <Button
+                      color="link"
+                      disabled={isAddressOpen}
+                      onClick={toggleAddressOpen}
+                    >
+                      Shipping Address
+                    </Button>
                   </Col>
                 </Row>
               </styles.Section>
@@ -82,7 +162,13 @@ const Profile = () => {
                     <styles.FaWpforms />
                   </Col>
                   <Col xs={9}>
-                    <Button color="link">My Order</Button>
+                    <Button
+                      color="link"
+                      disabled={isOrderOpen}
+                      onClick={toggleOrderOpen}
+                    >
+                      My Order
+                    </Button>
                   </Col>
                 </Row>
               </styles.Section>
@@ -92,7 +178,13 @@ const Profile = () => {
                     <styles.FaRegCreditCard />
                   </Col>
                   <Col xs={9}>
-                    <Button color="link">Topup Credit</Button>
+                    <Button
+                      color="link"
+                      disabled={isTopupOpen}
+                      onClick={toggleTopupOpen}
+                    >
+                      Topup Credit
+                    </Button>
                   </Col>
                 </Row>
               </styles.Section>
@@ -109,22 +201,61 @@ const Profile = () => {
             </styles.SectionTitle>
           </Col>
           <Col xs={9}>
-            <Card body>
-              <CardTitle tag="h5" className="font-weight-bold">
-                My Profile
-              </CardTitle>
-              <CardText className="text-muted border-bottom">
-                Manage your profile information
-              </CardText>
-              <CardBody>
-                <FormProfile />
-                {/* <styles.ButtonAddress>Add new address</styles.ButtonAddress>
-                <CardAddress /> */}
-                {/* <FormAddress /> */}
-                {/* <CardOrder /> */}
-                {/* <CardTopup /> */}
-              </CardBody>
-            </Card>
+            {isProfileOpen && (
+              <Card body>
+                <CardTitle tag="h5" className="font-weight-bold">
+                  My Profile
+                </CardTitle>
+                <CardText className="text-muted border-bottom">
+                  Manage your profile information
+                </CardText>
+                <CardBody>
+                  <FormProfile />
+                </CardBody>
+              </Card>
+            )}
+            {isAddressOpen && (
+              <Card body>
+                <CardTitle tag="h5" className="font-weight-bold">
+                  My Profile
+                </CardTitle>
+                <CardText className="text-muted border-bottom">
+                  Manage your profile information
+                </CardText>
+                <CardBody>
+                  <styles.ButtonAddress onClick={toggleAddAddress}>
+                    Add new address
+                  </styles.ButtonAddress>
+                  <CardAddress onChange={toggleChangeAddress} />
+                </CardBody>
+              </Card>
+            )}
+            {isOrderOpen && (
+              <Card body>
+                <CardTitle tag="h5" className="font-weight-bold">
+                  My Profile
+                </CardTitle>
+                <CardText className="text-muted border-bottom">
+                  Manage your profile information
+                </CardText>
+                <CardBody>
+                  <CardOrder />
+                </CardBody>
+              </Card>
+            )}
+            {isTopupOpen && (
+              <Card body>
+                <CardTitle tag="h5" className="font-weight-bold">
+                  My Profile
+                </CardTitle>
+                <CardText className="text-muted border-bottom">
+                  Manage your profile information
+                </CardText>
+                <CardBody>
+                  <CardTopup />
+                </CardBody>
+              </Card>
+            )}
           </Col>
         </Row>
       </styles.Container>
