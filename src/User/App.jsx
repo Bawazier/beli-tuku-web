@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import { connect } from "react-redux";
 
 import Home from "./Pages/Home";
 import DetailProduct from "./Pages/DetailProduct";
@@ -15,28 +14,7 @@ import ConfirmPass from "./Pages/ConfirmPass";
 
 import PrivateRoute from "./Components/PrivateRoute";
 
-//Actions
-import authAction from "../User/Redux/actions/auth";
-
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      token: "",
-      isLogin: false,
-    };
-  }
-
-  async componentDidMount() {
-    if (localStorage.getItem("token")) {
-      this.props.setToken(localStorage.getItem("token"));
-    }
-    await this.props.auth;
-    this.setState({
-      token: this.props.auth.token,
-      isLogin: this.props.auth.isLogin,
-    });
-  }
   render() {
     return (
       <BrowserRouter>
@@ -69,21 +47,19 @@ class App extends React.Component {
             exact
           />
 
-          <PrivateRoute exact path="/profile" component={Profile} />
-          <PrivateRoute exact path="/bag" component={Cart} />
-          <PrivateRoute exact path="/checkout" component={Checkout} />
+          <PrivateRoute exact path="/profile">
+            <Profile />
+          </PrivateRoute>
+          <PrivateRoute exact path="/bag">
+            <Cart />
+          </PrivateRoute>
+          <PrivateRoute exact path="/checkout">
+            <Checkout />
+          </PrivateRoute>
         </Switch>
       </BrowserRouter>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-});
-
-const mapDispatchToProps = {
-  setToken: authAction.setToken,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

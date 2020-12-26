@@ -1,32 +1,44 @@
-import React from "react";
+/* eslint-disable react/prop-types */
+import React, { Component } from "react";
 import { Route, Redirect } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { connect } from "react-redux";
 
-const PrivateRoute = ({ component: Component, path, ...rest }) => {
-  const auth = useSelector((state) => state.auth);
-  return (
-    <Route
-      path={path}
-      {...rest}
-      render={(props) => {
-        if (auth.token.length) {
-          return <Component {...props} />;
-        }
-        return (
-          <Redirect
-            to={{
+import authAction from "../Redux/actions/auth";
+
+class PrivateRoute extends Component {
+  render() {
+    return (
+      <Route render={
+        (props) => {
+          const childWithProps = React.Children.map(this.props.children, (child) => {
+            if (React.isValidElement(child)) {
+              return React.cloneElement(child, props);
+            }
+            return child;
+          });
+          if (this.props.auth.isLogin) {
+            return childWithProps;
+          }
+          return (
+            <Redirect to={{
               pathname: "/login",
-              state: {
-                alert: "Login first!",
-                color: "danger",
-                location: props.location.pathname,
-              },
+              state: { alert: "Login first!", color: "danger", location: this.props.location.pathname },
             }}
-          />
-        );
-      }}
-    />
-  );
+            />
+          );
+        }
+      }
+      />
+    );
+  }
+}
+
+const mapStateToProps = (state) => ({
+  auth: state.auth
+});
+
+const mapDispatchToProps = {
+  setToken: authAction.setToken,
 };
 
-export default PrivateRoute;
+export default connect(mapStateToProps, mapDispatchToProps)(PrivateRoute);
