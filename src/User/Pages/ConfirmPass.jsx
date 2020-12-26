@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -12,7 +14,14 @@ import {
   FormGroup,
 } from "reactstrap";
 
+//Actions
+import AuthActions from "../Redux/actions/auth";
+
 const ConfirmPass = () => {
+  const auth = useSelector((state) => state.auth);
+  const [error, setError] = useState(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const validationSchema = Yup.object({
     newPassword: Yup.string()
@@ -22,6 +31,13 @@ const ConfirmPass = () => {
       .oneOf([Yup.ref("newPassword"), null], "Passwords not match")
       .required("Password confirmation is required"),
   });
+
+  useEffect(() => {
+    if (!auth.isLoading && auth.isError) {
+      setError(!error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth]);
 
   return (
     <>
@@ -35,7 +51,9 @@ const ConfirmPass = () => {
             xs={12}
             className="d-flex align-items-center justify-content-center"
           >
-            <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
+            <Link to="/">
+              <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
+            </Link>
           </Col>
           <Col
             xs={12}
@@ -66,7 +84,11 @@ const ConfirmPass = () => {
                   newPassword: values.newPassword,
                   confirmNewPassword: values.confirmPassword,
                 };
-                console.log(data);
+                console.log(auth.emailValidData.id);
+                await dispatch(
+                  AuthActions.forgotPass(auth.emailValidData.id, data)
+                );
+                history.push("/login");
               }}
             >
               {({
@@ -115,7 +137,6 @@ const ConfirmPass = () => {
                         : null}
                     </h6>
                   </FormGroup>
-                  <h6 className="text-warning text-right">Forgot password ?</h6>
                   <styles.Button block type="submit" disabled={isSubmitting}>
                     RESET
                   </styles.Button>

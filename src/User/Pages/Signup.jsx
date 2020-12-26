@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -13,7 +15,14 @@ import {
   FormGroup,
 } from "reactstrap";
 
+//Actions
+import AuthActions from "../Redux/actions/auth";
+
 const Signup = () => {
+  const auth = useSelector((state) => state.auth);
+  const [error, setError] = useState(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const validationSchema = Yup.object({
     name: Yup.string().max(80, "name cannot be too long").required(),
@@ -22,6 +31,18 @@ const Signup = () => {
       .min(8, "Password cannot be less than 8")
       .required("Password is Required"),
   });
+
+  useEffect(() => {
+    dispatch(AuthActions.logout());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!auth.isLoading && auth.isError) {
+      setError(!error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth]);
 
   return (
     <>
@@ -35,7 +56,9 @@ const Signup = () => {
             xs={12}
             className="d-flex align-items-center justify-content-center"
           >
-            <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
+            <Link to="/">
+              <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
+            </Link>
           </Col>
           <Col
             xs={12}
@@ -69,7 +92,8 @@ const Signup = () => {
                   email: values.email,
                   password: values.password,
                 };
-                console.log(data);
+                await dispatch(AuthActions.signup(data));
+                history.push("/login");
               }}
             >
               {({
@@ -147,9 +171,11 @@ const Signup = () => {
           >
             <styles.Message>Already have a Beli Tuku account?</styles.Message>
             &nbsp;
-            <styles.Message className="text-warning text-right">
-              Login
-            </styles.Message>
+            <Link to="/login">
+              <styles.Message className="text-warning text-right">
+                Login
+              </styles.Message>
+            </Link>
           </Col>
         </Row>
       </styles.Container>

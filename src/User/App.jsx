@@ -15,7 +15,28 @@ import ConfirmPass from "./Pages/ConfirmPass";
 
 import PrivateRoute from "./Components/PrivateRoute";
 
+//Actions
+import authAction from "../User/Redux/actions/auth";
+
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      token: "",
+      isLogin: false,
+    };
+  }
+
+  async componentDidMount() {
+    if (localStorage.getItem("token")) {
+      this.props.setToken(localStorage.getItem("token"));
+    }
+    await this.props.auth;
+    this.setState({
+      token: this.props.auth.token,
+      isLogin: this.props.auth.isLogin,
+    });
+  }
   render() {
     return (
       <BrowserRouter>
@@ -56,4 +77,13 @@ class App extends React.Component {
     );
   }
 }
-export default App;
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+const mapDispatchToProps = {
+  setToken: authAction.setToken,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

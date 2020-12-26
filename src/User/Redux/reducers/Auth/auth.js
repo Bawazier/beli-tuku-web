@@ -19,13 +19,13 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case 'LOGIN_PENDING': {
+    case "LOGIN_PENDING": {
       return {
         ...state,
         isLoading: true,
       };
     }
-    case 'LOGIN_REJECTED': {
+    case "LOGIN_REJECTED": {
       return {
         ...state,
         isLogin: false,
@@ -34,7 +34,7 @@ export default (state = initialState, action) => {
         alertMsg: action.payload,
       };
     }
-    case 'LOGIN_FULFILLED': {
+    case "LOGIN_FULFILLED": {
       localStorage.setItem("token", action.payload.data.token);
       return {
         ...state,
@@ -44,13 +44,20 @@ export default (state = initialState, action) => {
         token: action.payload.data.token,
       };
     }
-    case 'SIGNUP_PENDING': {
+    case "SET_TOKEN": {
+      return {
+        ...state,
+        isLogin: true,
+        token: action.payload,
+      };
+    }
+    case "SIGNUP_PENDING": {
       return {
         ...state,
         isSignupLoading: true,
       };
     }
-    case 'SIGNUP_REJECTED': {
+    case "SIGNUP_REJECTED": {
       return {
         ...state,
         isSignupLoading: false,
@@ -58,20 +65,20 @@ export default (state = initialState, action) => {
         alertMsg: action.payload,
       };
     }
-    case 'SIGNUP_FULFILLED': {
+    case "SIGNUP_FULFILLED": {
       return {
         ...state,
         isSignupLoading: false,
         isSignupError: false,
       };
     }
-    case 'FORGOT_PASS_PENDING': {
+    case "FORGOT_PASS_PENDING": {
       return {
         ...state,
         isForgotPassLoading: true,
       };
     }
-    case 'FORGOT_PASS_REJECTED': {
+    case "FORGOT_PASS_REJECTED": {
       return {
         ...state,
         isForgotPassLoading: false,
@@ -79,20 +86,20 @@ export default (state = initialState, action) => {
         alertMsg: action.payload.data.message,
       };
     }
-    case 'FORGOT_PASS_FULFILLED': {
+    case "FORGOT_PASS_FULFILLED": {
       return {
         ...state,
         isForgotPassLoading: false,
         isForgotPassError: false,
       };
     }
-    case 'VALIDATE_FORGOT_PASS_PENDING': {
+    case "VALIDATE_FORGOT_PASS_PENDING": {
       return {
         ...state,
         isEmailLoading: true,
       };
     }
-    case 'VALIDATE_FORGOT_PASS_REJECTED': {
+    case "VALIDATE_FORGOT_PASS_REJECTED": {
       return {
         ...state,
         isEmailLoading: false,
@@ -100,7 +107,7 @@ export default (state = initialState, action) => {
         alertMsg: action.payload.data.message,
       };
     }
-    case 'VALIDATE_FORGOT_PASS_FULFILLED': {
+    case "VALIDATE_FORGOT_PASS_FULFILLED": {
       return {
         ...state,
         isEmailError: false,
@@ -108,7 +115,7 @@ export default (state = initialState, action) => {
         emailValidData: action.payload.data.validate,
       };
     }
-    case 'LOGOUT': {
+    case "LOGOUT": {
       localStorage.removeItem("token");
       return initialState;
     }

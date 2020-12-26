@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -12,13 +14,32 @@ import {
   FormGroup,
 } from "reactstrap";
 
+//Actions
+import AuthActions from "../Redux/actions/auth";
+
 const ResetPass = () => {
+  const auth = useSelector((state) => state.auth);
+  const [error, setError] = useState(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const validationSchema = Yup.object({
     email: Yup.string()
       .email('Input must be Email')
       .required('Email is Required'),
   });
+
+  useEffect(() => {
+    dispatch(AuthActions.logout());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!auth.isLoading && auth.isError) {
+      setError(!error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth]);
 
   return (
     <>
@@ -32,7 +53,9 @@ const ResetPass = () => {
             xs={12}
             className="d-flex align-items-center justify-content-center"
           >
-            <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
+            <Link to="/">
+              <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
+            </Link>
           </Col>
           <Col
             xs={12}
@@ -53,7 +76,8 @@ const ResetPass = () => {
                 const data = {
                   email: values.email,
                 };
-                console.log(data);
+                await dispatch(AuthActions.validateForgotPass(data));
+                history.push("/reset/confirm");
               }}
             >
               {({
@@ -83,7 +107,6 @@ const ResetPass = () => {
                       {errors.email && touched.email ? errors.email : null}
                     </h6>
                   </FormGroup>
-                  <h6 className="text-warning text-right">Forgot password ?</h6>
                   <styles.Button block type="submit" disabled={isSubmitting}>
                     SEND
                   </styles.Button>
@@ -97,9 +120,11 @@ const ResetPass = () => {
           >
             <styles.Message>Don't have a Shoppe.id account?</styles.Message>
             &nbsp;
-            <styles.Message className="text-warning text-right">
-              Register
-            </styles.Message>
+            <Link to="/signup">
+              <styles.Message className="text-warning text-right">
+                Register
+              </styles.Message>
+            </Link>
           </Col>
         </Row>
       </styles.Container>
