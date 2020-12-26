@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import styled from 'styled-components';
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import {
   Container,
   Row,
@@ -14,14 +16,32 @@ import {
 
 import { FaSearch, FaShoppingCart, FaBell, FaWeixin } from "react-icons/fa";
 
+//Actions
+import HomeActions from '../Redux/actions/home';
+
 const Navigation = () => {
+  const auth = useSelector((state) => state.auth);
   const [searchBy, setSearchBy] = useState('Name');
+  const [searchValue, setSearchValue] = useState('');
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const handlingSearch = async () => {
+    if (searchBy === "Name") await dispatch(HomeActions.catalogSearch(searchValue));
+    if (searchBy === "Categories") await dispatch(HomeActions.catalogSearch("", searchValue));
+    if (searchBy === "Colors") await dispatch(HomeActions.catalogSearch("", "", searchValue));
+    if (searchBy === "Stores") await dispatch(HomeActions.catalogSearch("", "", "", "", searchValue));
+    history.push("/catalog");
+  }
+
   return (
     <styles.Container fluid>
       <Container className="w-80">
         <Row>
           <Col xs={2} class="border">
-            <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
+            <Link to="/">
+              <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
+            </Link>
           </Col>
           <Col xs={6}>
             <styles.ContainerRow>
@@ -50,6 +70,7 @@ const Navigation = () => {
               </styles.SearchCol>
               <styles.SearchCol xs={8}>
                 <styles.SearchInput
+                  onChange={(event) => setSearchValue(event.target.value)}
                   type="text"
                   name="search"
                   id="search"
@@ -57,14 +78,14 @@ const Navigation = () => {
                 />
               </styles.SearchCol>
               <styles.SearchCol xs={1}>
-                <styles.SearchButton>
+                <styles.SearchButton onClick={handlingSearch}>
                   <FaSearch />
                 </styles.SearchButton>
               </styles.SearchCol>
             </styles.ContainerRow>
           </Col>
           <Col xs={4}>
-            {true ? (
+            {auth.token.length ? (
               <styles.ContainerRow>
                 <Col xs={4}></Col>
                 <Col xs={2}>
@@ -78,7 +99,7 @@ const Navigation = () => {
                 </Col>
                 <Col xs={2}>
                   <styles.Img
-                    src={require('../Assets/Images/PrimaryImage.png')}
+                    src={require("../Assets/Images/PrimaryImage.png")}
                     alt="Card image cap"
                   />
                 </Col>
@@ -87,12 +108,12 @@ const Navigation = () => {
               <styles.ContainerRow>
                 <Col xs={4}></Col>
                 <Col xs={4}>
-                  <Button block color="warning">
+                  <Button block color="warning" onClick={() => history.push('/login')}>
                     Login
                   </Button>
                 </Col>
                 <Col xs={4}>
-                  <Button block outline color="warning">
+                  <Button block outline color="warning" onClick={() => history.push('/signup')}>
                     Signup
                   </Button>
                 </Col>

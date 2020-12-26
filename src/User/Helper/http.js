@@ -1,6 +1,6 @@
 import { default as axios } from 'axios'
 
-const { REACT_APP_API_URL } = process.env.local
+const { REACT_APP_API_URL } = process.env
 
 export default (token = false) => {
     return axios.create({

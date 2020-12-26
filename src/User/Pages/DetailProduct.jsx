@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useHistory, Redirect } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import styled, { createGlobalStyle } from "styled-components";
 import {Container, Row, Col, Button} from 'reactstrap';
 import numeral from "numeral";
@@ -7,119 +9,225 @@ import StarRatingComponent from "react-star-rating-component";
 //Components
 import Navigation from "../Components/Navigation";
 
+//Actions
+import HomeActions from '../Redux/actions/home';
+import transactionActions from '../Redux/actions/transaction';
+
 const DetailProduct = () => {
+  const { REACT_APP_API_URL } = process.env;
+  const { dataProduct, isLoading, isError } = useSelector(
+    (state) => state.detailProduct
+  );
+  const {
+    dataReviews,
+    pageInfo,
+    isReviewsLoading,
+    isReviewsError,
+  } = useSelector((state) => state.detailProduct);
+  const { dataListCart } = useSelector((state) => state.cart);
+  const catalog = useSelector((state) => state.catalogResults);
+  const auth = useSelector((state) => state.auth);
+  const [choiceColor, setChoiceColor] = useState({});
+  const [choiceSize, setChoiceSize] = useState([]);
+  const [addCart, setAddCart] = useState(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const addToCart = async () => {
+    if (auth.token.length) {
+      setAddCart(!addCart);
+      await dispatch(
+        transactionActions.addToCart(
+          auth.token,
+          dataProduct.id,
+          1,
+          choiceColor.id || dataProduct.ProductColors[0].id,
+          choiceSize.id || dataProduct.ProductSizes[0].id
+        )
+      );
+      dispatch(transactionActions.listCart(auth.token));
+    } else {
+      history.push("/login");
+    }
+  };
+
+  const buy = async () => {
+    await dispatch(
+      transactionActions.addToCart(
+        auth.token,
+        dataProduct.id,
+        1,
+        choiceColor.id || dataProduct.ProductColors[0].id,
+        choiceSize.id || dataProduct.ProductSizes[0].id
+      )
+    );
+    await dispatch(transactionActions.listCart(auth.token));
+    dataListCart.map(async (item) => {
+      if (item.detailProductId === dataProduct.id) {
+        dispatch(transactionActions.checkoutCart(auth.token, item.id));
+      }
+    });
+    history.push("/checkout");
+    dispatch(transactionActions.listCart(auth.token));
+  };
+
+  const detailProduct = (id_product) => {
+    dispatch(HomeActions.detailProduct(id_product));
+    dispatch(HomeActions.detailProductReviews(id_product));
+  };
+
   return (
     <>
       <Navigation />
       <styles.GlobalStyle />
-      <styles.Container>
-        <styles.ContainerRow>
-          <Col xs={6} className="ml-0 pl-0">
-            <Row>
-              {[...Array(4)].map((item) => (
-                <styles.ImageCol xs={6}>
-                  <img
-                    src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15ba800aa1d%20text%20%7B%20fill%3A%23555%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15ba800aa1d%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.921875%22%20y%3D%22218.3%22%3EFirst%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
-                    alt="Card image cap"
-                    className="w-100 h-100"
-                  />
-                </styles.ImageCol>
-              ))}
-            </Row>
-          </Col>
-          <Col xs={6} className="mr-0 pr-0">
-            <h2>Nike CruzrOne (Bright Crimson)</h2>
-            <h6 className="text-muted">Nike</h6>
-            <StarRatingComponent
-              name="rate1"
-              starCount={5}
-              starColor="#1bc29b"
-              emptyStarColor="#102939"
-              value={4}
-              editable={false}
-            />
-            <styles.Section>
-              <h6 className="text-muted">Price</h6>
-              <h4 className="font-weight-bold">
-                Rp.
-                {numeral(2000000).format(0, 0).toString().replace(",", ".")}
-                ,-
-              </h4>
-            </styles.Section>
-            <styles.Section className="w-80">
-              <h6 className="text-muted">Color</h6>
+      {!isLoading && !isError && dataProduct.length ? (
+        <styles.Container>
+          <styles.ContainerRow>
+            <Col xs={6} className="ml-0 pl-0">
               <Row>
-                {[...Array(4)].map((item) => (
-                  <Col xs={2}>
-                    <styles.ColorContainer className="rounded-circle">
-                      <styles.ColorButton className="rounded-circle">
-                        &nbsp;
-                      </styles.ColorButton>
-                    </styles.ColorContainer>
-                  </Col>
-                ))}
+                {!isLoading &&
+                  !isError &&
+                  dataProduct &&
+                  dataProduct.ProductImages.map((item) => (
+                    <styles.ImageCol xs={6}>
+                      <img
+                        src={
+                          item.picture
+                            ? REACT_APP_API_URL + "/" + item.picture
+                            : require("../Assets/Images/Logo.png")
+                        }
+                        alt="Card image cap"
+                        className="w-100 h-100"
+                      />
+                    </styles.ImageCol>
+                  ))}
               </Row>
-            </styles.Section>
-            <styles.Section>
-              <h6 className="text-muted">Size</h6>
-              <Row>
-                {["XS", "S", "M", "L", "XL"].map((item) => (
-                  <Col xs={2}>
+            </Col>
+            <Col xs={6} className="mr-0 pr-0">
+              <h2>{dataProduct.name || "..."}</h2>
+              <h6 className="text-muted">
+                {(dataProduct.Store && dataProduct.Store.name) || ""}
+              </h6>
+              <StarRatingComponent
+                name="rate1"
+                starCount={5}
+                starColor="#1bc29b"
+                emptyStarColor="#102939"
+                value={dataProduct.ratings || 0}
+                editable={false}
+              />
+              <styles.Section>
+                <h6 className="text-muted">Price</h6>
+                <h4 className="font-weight-bold">
+                  Rp.
+                  {numeral(dataProduct.price || 0)
+                    .format(0, 0)
+                    .toString()
+                    .replace(",", ".")}
+                  ,-
+                </h4>
+              </styles.Section>
+              <styles.Section className="w-80">
+                <h6 className="text-muted">Color</h6>
+                <Row>
+                  {!isLoading &&
+                    !isError &&
+                    dataProduct &&
+                    dataProduct.ProductColors.map((item) => (
+                      <Col xs={2}>
+                        <styles.ColorContainer className="rounded-circle">
+                          <styles.ColorButton
+                            onClick={() => setChoiceColor(item)}
+                            className="rounded-circle"
+                            bgColor={item.hexa}
+                            disabled={
+                              item.status !== "available" ? true : false
+                            }
+                          >
+                            &nbsp;
+                          </styles.ColorButton>
+                        </styles.ColorContainer>
+                      </Col>
+                    ))}
+                </Row>
+              </styles.Section>
+              <styles.Section>
+                <h6 className="text-muted">Size</h6>
+                <Row>
+                  {!isLoading &&
+                    !isError &&
+                    dataProduct &&
+                    dataProduct.ProductSizes.map((item) => (
+                      <Col xs={2}>
+                        <div>
+                          <styles.SizeButton
+                            onClick={() => setChoiceSize(item)}
+                            outline={
+                              choiceSize.size === item.size ? false : true
+                            }
+                          >
+                            {item.size}
+                          </styles.SizeButton>
+                        </div>
+                      </Col>
+                    ))}
+                </Row>
+              </styles.Section>
+              <styles.Section>
+                <h6 className="text-muted">Quantity</h6>
+                <Row className="align-items-center">
+                  <Col xs={2} className="pr-0 mr-0">
                     <div>
-                      <styles.SizeButton outline>{item}</styles.SizeButton>
+                      <styles.CounterButton>-</styles.CounterButton>
                     </div>
                   </Col>
-                ))}
-              </Row>
-            </styles.Section>
-            <styles.Section>
-              <h6 className="text-muted">Quantity</h6>
-              <Row className="align-items-center">
-                <Col xs={2} className="pr-0 mr-0">
-                  <div>
-                    <styles.CounterButton>-</styles.CounterButton>
-                  </div>
-                </Col>
-                <Col xs={1} className="p-0 m-0">
-                  <h5 className="text-center font-weight-bold">1</h5>
-                </Col>
-                <Col xs={2} className="pl-0 ml-0">
-                  <div>
-                    <styles.CounterButton>+</styles.CounterButton>
-                  </div>
-                </Col>
-              </Row>
-            </styles.Section>
-            <styles.Section className="mt-5">
-              <Row>
-                <Col xs={3}>
-                  <Button
-                    outline
-                    color="warning"
-                    className="w-100 font-weight-bold"
-                  >
-                    Chat
-                  </Button>
-                </Col>
-                <Col xs={4}>
-                  <Button
-                    outline
-                    color="warning"
-                    className="w-100 font-weight-bold"
-                  >
-                    Add Bag
-                  </Button>
-                </Col>
-                <Col xs={5}>
-                  <Button color="warning" className="w-100 font-weight-bold">
-                    Buy Now
-                  </Button>
-                </Col>
-              </Row>
-            </styles.Section>
-          </Col>
-        </styles.ContainerRow>
-      </styles.Container>
+                  <Col xs={1} className="p-0 m-0">
+                    <h5 className="text-center font-weight-bold">1</h5>
+                  </Col>
+                  <Col xs={2} className="pl-0 ml-0">
+                    <div>
+                      <styles.CounterButton>+</styles.CounterButton>
+                    </div>
+                  </Col>
+                </Row>
+              </styles.Section>
+              <styles.Section className="mt-5">
+                <Row>
+                  <Col xs={3}>
+                    <Button
+                      outline
+                      color="warning"
+                      className="w-100 font-weight-bold"
+                    >
+                      Chat
+                    </Button>
+                  </Col>
+                  <Col xs={4}>
+                    <Button
+                      outline
+                      color="warning"
+                      className="w-100 font-weight-bold"
+                    >
+                      Add Bag
+                    </Button>
+                  </Col>
+                  <Col xs={5}>
+                    <Button color="warning" className="w-100 font-weight-bold">
+                      Buy Now
+                    </Button>
+                  </Col>
+                </Row>
+              </styles.Section>
+            </Col>
+          </styles.ContainerRow>
+        </styles.Container>
+      ) : (
+        <Redirect
+          to={{
+            pathname: "/",
+          }}
+        />
+      )}
       <styles.Container>
         <styles.SectionTitle>
           <h4>Product Information</h4>
@@ -216,6 +324,7 @@ const styles = {
   ColorButton: styled(Button)`
     width: 100%;
     height: 100%;
+    background-color: ${props => props.bgColor}
   `,
 
   SizeButton: styled(Button)`

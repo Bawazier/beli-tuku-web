@@ -10,29 +10,41 @@ import {
 import numeral from "numeral";
 import StarRatingComponent from "react-star-rating-component";
 
-const CardProduct = () => {
+const CardProduct = (props) => {
+  const { REACT_APP_API_URL } = process.env;
   return (
-    <styles.CardOriginal body className="text-center">
+    <styles.CardOriginal body className="text-center" onClick={props.productDetail}>
       <styles.CardImg
-        src={require("../Assets/Images/PrimaryImage.png")}
+        src={
+          props.productImage
+            ? REACT_APP_API_URL + "/" + props.productImage
+            : require("../Assets/Images/PrimaryImage.png")
+        }
         alt="Card image cap"
       />
       <CardBody>
         <styles.PriceText className="h5">
           Rp.
-          {numeral(2000000).format(0, 0).toString().replace(",", ".")}
+          {numeral(props.productPrice || 0)
+            .format(0, 0)
+            .toString()
+            .replace(",", ".")}
           ,-
         </styles.PriceText>
-        <CardTitle tag="h5">Product Name</CardTitle>
+        <CardTitle tag="h5">
+          {props.productName.length < 20
+            ? props.productName
+            : props.productName.substring(0, 20).concat("...")}
+        </CardTitle>
         <CardSubtitle tag="h6" className="mb-2 text-muted">
-          Store Name
+          {props.productStore}
         </CardSubtitle>
         <StarRatingComponent
           name="rate1"
           starCount={5}
           starColor="#1bc29b"
           emptyStarColor="#102939"
-          value={4}
+          value={props.productRating || 0}
           editable={false}
         />
       </CardBody>
