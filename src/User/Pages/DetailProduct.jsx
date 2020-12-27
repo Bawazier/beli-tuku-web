@@ -112,7 +112,9 @@ const DetailProduct = () => {
                 !isError &&
                 dataProduct.ProductImages &&
                 dataProduct.ProductImages.map((item) => (
-                  <styles.ImageCol xs={dataProduct.ProductImages.length > 2 ? 6 : 12}>
+                  <styles.ImageCol
+                    xs={dataProduct.ProductImages.length > 2 ? 6 : 12}
+                  >
                     <img
                       src={
                         item.picture
@@ -120,7 +122,7 @@ const DetailProduct = () => {
                           : require("../Assets/Images/Logo.png")
                       }
                       alt="Card image cap"
-                      className="w-100 h-100"
+                      className="w-100 h-100 shadow rounded"
                     />
                   </styles.ImageCol>
                 ))}
@@ -159,7 +161,11 @@ const DetailProduct = () => {
                   dataProduct.ProductColors.map((item) => (
                     <Col xs={2}>
                       <styles.ColorContainer
-                        className="rounded-circle"
+                        className={
+                          choiceSize.size === item.size
+                            ? "shadow rounded-circle"
+                            : "rounded-circle"
+                        }
                         isSelect={choiceColor.id === item.id}
                       >
                         <styles.ColorButton
@@ -187,6 +193,9 @@ const DetailProduct = () => {
                         <styles.SizeButton
                           onClick={() => setChoiceSize(item)}
                           isSelect={choiceSize.size === item.size}
+                          className={
+                            choiceSize.size === item.size ? "shadow" : null
+                          }
                         >
                           {item.size}
                         </styles.SizeButton>
@@ -318,7 +327,7 @@ const DetailProduct = () => {
           {!catalog.isLoading &&
             !catalog.isError &&
             catalog.data.map((item) => (
-              <Col xs={3} className="mb-3">
+              <Col className="mb-3">
                 <CardProduct
                   productDetail={() => detailProduct(item.id)}
                   productImage={item.ProductImages[0].picture}

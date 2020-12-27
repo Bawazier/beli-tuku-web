@@ -58,9 +58,15 @@ const styles = {
     width: 100%;
     height: auto;
     background: transparent;
-    border: 2px solid #102939;
+    border: 0.5px solid #102939;
+    border-radius: 10px;
     padding: 0;
     overflow: hidden;
+    box-shadow: 0px 0px 14px rgba(173, 173, 173, 0.25);
+    &:hover {
+      cursor: pointer;
+      opacity: 0.5;
+    }
   `,
 
   CardImg: styled(CardImg)`
