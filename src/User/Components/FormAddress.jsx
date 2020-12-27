@@ -1,9 +1,16 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import { Formik, Field } from "formik";
 import * as Yup from "yup";
 
+//Actions
+import addressActions from '../Redux/actions/address';
+
 const FormAddress = (props) => {
+  const auth = useSelector((state) => state.auth);
+  const address = useSelector((state) => state.address);
+  const dispatch = useDispatch();
 
   const validationSchema = Yup.object({
     fullName: Yup.string().required(),
@@ -21,12 +28,12 @@ const FormAddress = (props) => {
   return (
     <Formik
       initialValues={{
-        fullName: props.recipientName || "",
-        address: props.address || "",
-        city: props.region || "",
-        addressName: props.name || "",
-        postalCode: props.postalCode || "",
-        tlp: props.recipientTlp || "",
+        fullName: address.dataGet.recipientName || "",
+        address: address.dataGet.address || "",
+        city: address.dataGet.region || "",
+        addressName: address.dataGet.name || "",
+        postalCode: address.dataGet.postalCode || "",
+        tlp: address.dataGet.recipientTlp || "",
         isPrimary: false,
       }}
       validationSchema={validationSchema}
@@ -40,7 +47,19 @@ const FormAddress = (props) => {
           recipientTlp: values.tlp || null,
           isPrimary: values.isPrimary,
         };
-        console.log(data);
+        if(props.isUpdate){
+          await dispatch(
+            addressActions.updateAddress(
+              auth.token,
+              address.dataGet.id,
+              data,
+            ),
+          );
+        } else {
+          await dispatch(addressActions.postAddress(auth.token, data));
+        }
+        props.close();
+        dispatch(addressActions.listAddress(auth.token));
       }}
     >
       {({
@@ -173,23 +192,26 @@ const FormAddress = (props) => {
               </FormGroup>
             </Col>
           </Row>
-          <FormGroup check>
-            <Field
-              className="mr-2"
-              type="checkbox"
-              name="isPrimary"
-              id="isPrimary"
-            />
-            <Label for="exampleCheck" check>
-              Make it the primary address
+          {props.isUpdate && (
+              <FormGroup check>
+                <Field
+                  className="mr-2"
+                  type="checkbox"
+                  name="isPrimary"
+                  id="isPrimary"
+                />
+                <Label for="exampleCheck" check>
+                  Make it the primary address
             </Label>
-          </FormGroup>
+              </FormGroup>
+          )}
           <Row className="align-items-center justify-content-end">
             <Col xs={2}>
               <Button
                 block
                 outline
                 color="warning"
+                onClick={props.close}
                 className="font-weight-bold"
               >
                 Cancel

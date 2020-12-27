@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from 'styled-components';
 import { Row, Col, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import { Formik, Field } from "formik";
 import * as Yup from "yup";
 
+//Actions
+import accountActions from '../Redux/actions/account';
+
 const FormProfile = () => {
+  const { REACT_APP_API_URL } = process.env;
+  const auth = useSelector((state) => state.auth);
+  const { data } = useSelector((state) => state.account);
+  const dispatch = useDispatch();
+
   const validationSchema = Yup.object({
     name: Yup.string().max(80, "name cannot be too long").required(),
     email: Yup.string().email("Input must be Email").required(),
@@ -25,12 +34,23 @@ const FormProfile = () => {
     hiddenFileInput.current.click();
   }; // Call a function (passed as a prop from the parent component)
   // to handle the user-selected file
-  const handleChange = (event) => {
+  const handleChange = async (event) => {
     const fileUploaded = event.target.files[0];
+    console.log(fileUploaded);
     if (!fileUploaded) {
       console.log('Please select image.');
     } else if (!fileUploaded.name.match(/\.(jpg|jpeg|png|gif)$/)) {
       console.log('Please select valid image.');
+    } else if (fileUploaded.size > 2 * 1024 * 1024) {
+      console.log('Gagal pilih gambar!', 'File gambar harus kurang dari 2MB');
+    } else {
+      const imageData = new FormData();
+      imageData.append('picture', fileUploaded);
+      console.log(imageData);
+      await dispatch(
+        accountActions.updateAccountImage(auth.token, imageData),
+      );
+      dispatch(accountActions.getAccount(auth.token));
     };
   };
 
@@ -39,22 +59,26 @@ const FormProfile = () => {
       <Col xs={8}>
         <Formik
           initialValues={{
-            name: "",
-            email: "",
-            phoneNumber: "",
-            gender: "Male",
-            dateOfBirth: "",
+            name: data.name || '',
+            email: data.email || '',
+            phoneNumber: data.phone || '',
+            gender: data.gender || "male",
+            dateOfBirth: data.dateOfBirth || "",
           }}
           validationSchema={validationSchema}
           onSubmit={async (values) => {
             const data = {
               name: values.name,
               email: values.email,
-              phoneNumber: values.phoneNumber,
+              phone: values.phoneNumber,
               gender: values.gender,
               dateOfBirth: values.dateOfBirth,
             };
             console.log(data);
+            await dispatch(
+              accountActions.updateAccount(auth.token, data),
+            );
+            dispatch(accountActions.getAccount(auth.token));
           }}
         >
           {({
@@ -134,10 +158,10 @@ const FormProfile = () => {
                   Gender
                 </Label>
                 <Col>
-                  <Field type="radio" name="gender" value="Male" /> Male
+                  <Field type="radio" name="gender" value="male" /> Male
                 </Col>
                 <Col>
-                  <Field type="radio" name="gender" value="Female" /> Female
+                  <Field type="radio" name="gender" value="female" /> Female
                 </Col>
               </FormGroup>
               <FormGroup row>
@@ -178,7 +202,7 @@ const FormProfile = () => {
         <Row className="align-items-center justify-content-center border-left">
           <Col xs={10} className="mb-3">
             <styles.Img
-              src={require("../Assets/Images/PrimaryImage.png")}
+              src={data.picture ? REACT_APP_API_URL + '/' + data.picture : require("../Assets/Images/PrimaryImage.png")}
               alt="Card image cap"
             />
           </Col>

@@ -1,17 +1,20 @@
 import React from "react";
-import { Row, Col, Button, Card, CardTitle, CardText } from "reactstrap";
+import { Row, Col, Card, CardTitle, CardText } from "reactstrap";
 import numeral from "numeral";
+import { format } from "date-fns";
 
-const CardOrder = () => {
+const CardOrder = (props) => {
   return (
-    <Card body>
+    <Card body className="mb-3">
       <Row className="align-items-center justify-content-between">
         <Col xs={8}>
-          <CardTitle tag="h5">Order №1947034</CardTitle>
+          <CardTitle tag="h5">
+            Order №{props.noOrder.replace(".", "").substring(0, 8)}
+          </CardTitle>
         </Col>
         <Col xs={4}>
           <CardTitle tag="h6" className="text-muted text-right">
-            05-12-2019
+            {format(new Date(props.createdAt), "yyyy-MM-dd")}
           </CardTitle>
         </Col>
       </Row>
@@ -20,7 +23,7 @@ const CardOrder = () => {
           <CardText className="text-muted">Tracking Number :</CardText>
         </Col>
         <Col xs={3}>
-          <CardText>IW3475453455</CardText>
+          <CardText>{props.noTracking.toUpperCase()}</CardText>
         </Col>
       </Row>
       <Row>
@@ -28,7 +31,7 @@ const CardOrder = () => {
           <CardText className="text-muted">Quantity :</CardText>
         </Col>
         <Col xs={3}>
-          <CardText>3</CardText>
+          <CardText>{props.quantity}</CardText>
         </Col>
       </Row>
       <Row>
@@ -38,12 +41,17 @@ const CardOrder = () => {
         <Col xs={3}>
           <CardText>
             Rp.
-            {numeral(2000000).format(0, 0).toString().replace(",", ".")}
+            {numeral(props.totalAmount)
+              .format(0, 0)
+              .toString()
+              .replace(",", ".")}
             ,-
           </CardText>
         </Col>
         <Col>
-          <CardText className="text-success text-right">Delivered</CardText>
+          <CardText className="text-success text-right font-weight-bold">
+            {props.status.toUpperCase()}
+          </CardText>
         </Col>
       </Row>
     </Card>

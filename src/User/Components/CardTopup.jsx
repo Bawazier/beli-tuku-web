@@ -1,14 +1,14 @@
 import React from "react";
-import { Button, Card } from "reactstrap";
+import { Button } from "reactstrap";
 import numeral from "numeral";
 
-const CardTopup = () => {
+const CardTopup = (props) => {
   return (
-    <Card>
-        <h1 className="text-success font-weight-bold p-3">
-          {numeral(2000000).format(0, 0).toString().replace(",", ".")}
-        </h1>
-    </Card>
+    <Button outline color="success" block onClick={props.topup} className="mb-3">
+      <h1 className="font-weight-bold p-3">
+        {numeral(props.charge).format(0, 0).toString().replace(",", ".")}
+      </h1>
+    </Button>
   );
 };
 
