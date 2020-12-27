@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import {
   Container,
   Row,
@@ -19,8 +19,11 @@ import CardProduct from "../Components/CardProduct";
 
 //Actions
 import HomeActions from '../Redux/actions/home';
+import accountActions from '../Redux/actions/account';
 
 const Home = () => {
+  const { REACT_APP_API_URL } = process.env;
+  const auth = useSelector((state) => state.auth);
   const listNewProducts = useSelector((state) => state.listNewProducts);
   const listPopularProducts = useSelector((state) => state.listPopularProducts);
   const listCategories = useSelector((state) => state.listCategories);
@@ -32,12 +35,26 @@ const Home = () => {
     dispatch(HomeActions.newProducts());
     dispatch(HomeActions.popularProducts());
     dispatch(HomeActions.listCategories());
+    if(auth.token.length){
+      dispatch(accountActions.getAccount(auth.token));
+    }
   }, []);
 
-  const detailProduct = async (id_product) => {
-    await dispatch(HomeActions.detailProduct(id_product));
-    history.push("/product");
-    dispatch(HomeActions.detailProductReviews(id_product));
+  useEffect(() => {
+    if(!listPopularProducts.isLoading && !listPopularProducts.isError){
+      listPopularProducts.data.map((items, index) => {
+            if (index < 4) {
+              console.log(items.id);
+              console.log(items.ProductImages[0].picture);
+              console.log(ad);
+              setAd([{ src: REACT_APP_API_URL + '/' + items.ProductImages[0].picture }]);
+            }
+      });
+    }
+  }, [listPopularProducts.isError, listPopularProducts.isLoading, listPopularProducts]);
+
+  const detailProduct = (id_product) => {
+    history.push(`/product/${id_product}`);
   };
 
   const viewAll = () => {
@@ -66,16 +83,14 @@ const Home = () => {
                 <styles.Item action onClick={searchByCategory}>
                   All Categories
                 </styles.Item>
-                {!listCategories.isLoading &&
-                  !listCategories.isError &&
-                  listCategories.data.map((item) => (
-                    <ListGroupItem
-                      action
-                      onClick={() => searchByCategory(item.name)}
-                    >
-                      {item.name}
-                    </ListGroupItem>
-                  ))}
+                {listCategories.data.map((item) => (
+                  <ListGroupItem
+                    action
+                    onClick={() => searchByCategory(item.name)}
+                  >
+                    {item.name}
+                  </ListGroupItem>
+                ))}
               </styles.ListGroup>
             </styles.List>
             <styles.SearchInput
@@ -88,14 +103,18 @@ const Home = () => {
             />
           </Col>
           <Col xs={9}>
-            {/* {!listPopularProducts.isLoading &&
-            !listPopularProducts.isError &&
-            listPopularProducts.data.map((items, index) => {
-              if (index === 0) {
-                return items.ProductImages.map((item) => setAd([...{src: item.picture}]));
-              }
-            })} */}
-            <UncontrolledCarousel items={ad} />
+            <styles.Carousel>
+              {/* <style>
+                {`.custom-tag > img {
+              max-width: 100%;
+              height: 300px;
+            }`}
+              </style>
+              <UncontrolledCarousel
+                items={ad}
+                className="custom-tag"
+              /> */}
+            </styles.Carousel>
           </Col>
         </styles.ContainerRow>
         <styles.SectionRow>
@@ -191,6 +210,11 @@ const styles = {
     left: 0;
     right: -17px; /* Increase/Decrease this value for cross-browser compatibility */
     overflow-y: scroll;
+  `,
+
+  Carousel: styled.div`
+    width: 100%;
+    height: 350px;
   `,
 
   Item: styled(ListGroupItem)`

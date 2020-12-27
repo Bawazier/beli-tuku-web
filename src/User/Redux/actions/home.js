@@ -64,6 +64,11 @@ export default {
     payload: http().get(`/public/products/${id_product}`),
   }),
 
+  setDetailProduct: (payload) => ({
+    type: "SET_DETAIL_PRODUCT",
+    payload,
+  }),
+
   detailProductReviews: (id_product) => ({
     type: "GET_DETAIL_PRODUCT_REVIEWS",
     payload: http().get(`/public/product/reviews/${id_product}`),

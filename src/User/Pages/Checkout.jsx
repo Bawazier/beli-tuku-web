@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import {
   Container,
@@ -21,11 +23,70 @@ import CardAddress from "../Components/CardAddress";
 import FormAddress from "../Components/FormAddress";
 import CardTopup from "../Components/CardTopup";
 
+//Actions
+import transactionActions from "../Redux/actions/transaction";
+import addressActions from "../Redux/actions/address";
+import accountActions from "../Redux/actions/account";
+
 const Checkout = () => {
+  const { REACT_APP_API_URL } = process.env;
   const [addressOpen, setAddressOpen] = useState(false);
   const [changeAddressOpen, setChangeAddressOpen] = useState(false);
   const [addAddressOpen, setAddAddressOpen] = useState(false);
   const [isTopupOpen, setIsTopupOpen] = useState(false);
+  const auth = useSelector((state) => state.auth);
+  const {
+    dataListCartOut,
+    isCheckoutError,
+    isCheckoutLoading,
+    totalAmount,
+  } = useSelector((state) => state.cart);
+  const address = useSelector(
+    (state) => state.address
+  );
+  const {
+    dataList,
+    isLoading,
+    isTopupCreditLoading,
+    isListTopupError,
+    isTopupCreditError,
+  } = useSelector((state) => state.topup);
+  const { data } = useSelector((state) => state.account);
+  const [order, setOrder] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  useEffect(() => {
+    dispatch(accountActions.getAccount(auth.token));
+    dispatch(addressActions.listAddress(auth.token));
+    dispatch(transactionActions.listCheckoutCart(auth.token));
+    dispatch(transactionActions.listTopup(auth.token));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const discardCheckout = async () => {
+    setOrder(false);
+    await dispatch(transactionActions.discardCheckoutCart(auth.token));
+    dispatch(transactionActions.listCart(auth.token));
+    history.goBack();
+  };
+
+  const submitOrder = async () => {
+    if (data.Credit.saldo >= totalAmount + 20000) {
+      await dispatch(transactionActions.orderByCredit(auth.token));
+      history.push("/");
+    } else {
+      setOrder(!order);
+    }
+  };
+
+  const topup = async (id) => {
+    await dispatch(transactionActions.topupCredit(auth.token, id));
+    dispatch(accountActions.getAccount(auth.token));
+    setSuccess(!success);
+    toggleTopupOpen();
+  };
 
   const toggle = () => setAddressOpen(!addressOpen);
   const toggleAddAddress = async () => {
@@ -51,7 +112,18 @@ const Checkout = () => {
               </CardTitle>
             </ModalHeader>
             <CardBody>
-              <CardTopup />
+              <Row>
+                {!isLoading &&
+                  !isListTopupError &&
+                  dataList.map((item) => (
+                    <Col xs={12}>
+                      <CardTopup
+                        charge={item.charge}
+                        topup={() => topup(item.id)}
+                      />
+                    </Col>
+                  ))}
+              </Row>
             </CardBody>
           </Card>
         </ModalBody>
@@ -68,7 +140,23 @@ const Checkout = () => {
               <styles.ButtonAddress onClick={toggleAddAddress}>
                 Add new address
               </styles.ButtonAddress>
-              <CardAddress onChange={toggleChangeAddress} />
+              {!address.isLoading &&
+                !address.isListError &&
+                address.dataList.map((item) => (
+                  <CardAddress
+                    onChange={async () => {
+                      await dispatch(
+                        addressActions.getAddress(auth.token, item.id)
+                      );
+                      toggleChangeAddress();
+                    }}
+                    name={item.name}
+                    address={item.address}
+                    region={item.region}
+                    postalCode={item.postalCode}
+                    isPrimary={item.isPrimary}
+                  />
+                ))}
             </CardBody>
           </Card>
         </ModalBody>
@@ -82,7 +170,7 @@ const Checkout = () => {
               </CardTitle>
             </ModalHeader>
             <CardBody>
-              <FormAddress />
+              <FormAddress close={toggleAddAddress} />
             </CardBody>
           </Card>
         </ModalBody>
@@ -96,7 +184,7 @@ const Checkout = () => {
               </CardTitle>
             </ModalHeader>
             <CardBody>
-              <FormAddress />
+              <FormAddress isUpdate={true} close={toggleChangeAddress} />
             </CardBody>
           </Card>
         </ModalBody>
@@ -109,51 +197,77 @@ const Checkout = () => {
             </styles.SectionTitle>
             <styles.Section>
               <h5>Shipping Address</h5>
-              <Card body>
-                <CardTitle tag="h5">Andreas Jane</CardTitle>
-                <CardText>
-                  Perumahan Sapphire Mediterania, Wiradadi, Kec. Sokaraja,
-                  Kabupaten Banyumas, Jawa Tengah, 53181 [Tokopedia Note: blok c
-                  16] Sokaraja, Kab. Banyumas, 53181
-                </CardText>
-                <Button
-                  color="warning"
-                  className="font-weight-bold text-white"
-                  onClick={toggle}
-                >
-                  Choose another address
-                </Button>
-              </Card>
+              {!address.isLoading &&
+                !address.isListError &&
+                address.dataList.map((item) => {
+                  if (item.isPrimary) {
+                    return (
+                      <Card body>
+                        <CardTitle tag="h5">{item.name}</CardTitle>
+                        <CardText>
+                          {item.address}, {item.region}, {item.postalCode}
+                        </CardText>
+                        <Button
+                          color="warning"
+                          className="font-weight-bold text-white"
+                          onClick={toggle}
+                        >
+                          Choose another address
+                        </Button>
+                      </Card>
+                    );
+                  }
+                })}
+              {!address.isLoading && address.isListError && (
+                <Card body>
+                  <Button
+                    color="danger"
+                    className="font-weight-bold text-white"
+                    onClick={toggle}
+                  >
+                    Choose another address
+                  </Button>
+                </Card>
+              )}
             </styles.Section>
             <styles.Section>
-              <Card body>
-                <Row className="align-items-center justify-content-between">
-                  <Col xs={8}>
-                    <Row>
-                      <Col xs={4} className="pr-0 mr-0">
-                        <styles.Img
-                          src={require("../Assets/Images/PrimaryImage.png")}
-                          alt="Card image cap"
-                        />
-                      </Col>
+              {!isCheckoutLoading &&
+                !isCheckoutError &&
+                dataListCartOut.map((item, index) => (
+                  <Card body className="mb-2">
+                    <Row className="align-items-center justify-content-between">
                       <Col xs={8}>
-                        <h5>Product Name lorem ipsum bal bla abalbals</h5>
-                        <h6 className="text-muted">Store name</h6>
+                        <Row>
+                          <Col xs={4} className="pr-0 mr-0">
+                            <styles.Img
+                              src={
+                                item.DetailProduct.ProductImage.picture
+                                  ? REACT_APP_API_URL +
+                                    "/" +
+                                    item.DetailProduct.ProductImage.picture
+                                  : require("../Assets/Images/PrimaryImage.png")
+                              }
+                              alt="Card image cap"
+                            />
+                          </Col>
+                          <Col xs={8}>
+                            <h5>{item.DetailProduct.Product.name || ""}</h5>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col xs={4}>
+                        <h6 className="text-right font-weight-bold">
+                          Rp.
+                          {numeral(item.totalPrice)
+                            .format(0, 0)
+                            .toString()
+                            .replace(",", ".")}
+                          ,-
+                        </h6>
                       </Col>
                     </Row>
-                  </Col>
-                  <Col xs={4}>
-                    <h6 className="text-right font-weight-bold">
-                      Rp.
-                      {numeral(200000000000)
-                        .format(0, 0)
-                        .toString()
-                        .replace(",", ".")}
-                      ,-
-                    </h6>
-                  </Col>
-                </Row>
-              </Card>
+                  </Card>
+                ))}
             </styles.Section>
           </Col>
           <Col xs={4}>
@@ -216,36 +330,55 @@ const Checkout = () => {
                 <Col>
                   <h6>
                     Rp.
-                    {numeral(220000).format(0, 0).toString().replace(",", ".")}
+                    {numeral((data.Credit && data.Credit.saldo) || 0)
+                      .format(0, 0)
+                      .toString()
+                      .replace(",", ".")}
                     ,-
                   </h6>
                 </Col>
               </Row>
             </styles.SectionTitle>
-            <styles.Section>
-              <Row>
-                <Col>
-                  <Button
-                    block
-                    outline
-                    color="warning"
-                    className="font-weight-bold"
-                    onClick={toggleTopupOpen}
-                  >
-                    TOPUP
-                  </Button>
-                </Col>
-                <Col>
-                  <Button
-                    block
-                    color="warning"
-                    className="font-weight-bold text-white"
-                  >
-                    BUY BY CREDIT
-                  </Button>
-                </Col>
-              </Row>
-            </styles.Section>
+            {!isCheckoutLoading && !isCheckoutError && (
+              <styles.Section>
+                <Row>
+                  <Col>
+                    <Button
+                      block
+                      outline
+                      color="warning"
+                      className="font-weight-bold"
+                      onClick={toggleTopupOpen}
+                    >
+                      TOPUP
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button
+                      block
+                      outline
+                      color="warning"
+                      onClick={discardCheckout}
+                      className="font-weight-bold"
+                    >
+                      DISCARD
+                    </Button>
+                  </Col>
+                </Row>
+                <Row className="mt-2">
+                  <Col xs={12}>
+                    <Button
+                      block
+                      color="warning"
+                      className="font-weight-bold text-white"
+                      onClick={submitOrder}
+                    >
+                      SUBMIT ORDER
+                    </Button>
+                  </Col>
+                </Row>
+              </styles.Section>
+            )}
           </Col>
         </Row>
       </styles.Container>

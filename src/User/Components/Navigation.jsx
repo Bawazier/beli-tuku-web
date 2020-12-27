@@ -20,7 +20,9 @@ import { FaSearch, FaShoppingCart, FaBell, FaWeixin } from "react-icons/fa";
 import HomeActions from '../Redux/actions/home';
 
 const Navigation = () => {
+  const { REACT_APP_API_URL } = process.env;
   const auth = useSelector((state) => state.auth);
+  const { data } = useSelector((state) => state.account);
   const [searchBy, setSearchBy] = useState('Name');
   const [searchValue, setSearchValue] = useState('');
   const dispatch = useDispatch();
@@ -89,7 +91,9 @@ const Navigation = () => {
               <styles.ContainerRow>
                 <Col xs={4}></Col>
                 <Col xs={2}>
-                  <FaShoppingCart className="w-100 text-white" />
+                  <Link to="/bag">
+                    <FaShoppingCart className="w-100 text-white" />
+                  </Link>
                 </Col>
                 <Col xs={2}>
                   <FaBell className="w-100 text-muted" />
@@ -98,10 +102,13 @@ const Navigation = () => {
                   <FaWeixin className="w-100 text-muted" />
                 </Col>
                 <Col xs={2}>
-                  <styles.Img
-                    src={require("../Assets/Images/PrimaryImage.png")}
-                    alt="Card image cap"
-                  />
+                  <Link to="/profile">
+                    <styles.Img
+                      src={data.picture ? REACT_APP_API_URL + '/' + data.picture : require("../Assets/Images/PrimaryImage.png")}
+                      alt="Card image cap"
+                    />
+                  </Link>
+                  
                 </Col>
               </styles.ContainerRow>
             ) : (

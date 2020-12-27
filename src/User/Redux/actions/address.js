@@ -29,4 +29,8 @@ export default {
     type: 'DELETE_ADDRESS',
     payload: http(token).delete(`/customer/address/${id_address}`),
   }),
+
+  resetForm: () => ({
+    type: 'RESET_FORM'
+  }),
 };

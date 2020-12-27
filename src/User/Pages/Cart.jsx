@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import styled, {createGlobalStyle} from "styled-components";
 import { Container, Row, Col, Button } from "reactstrap";
 import numeral from "numeral";
@@ -7,7 +9,34 @@ import numeral from "numeral";
 import TableCart from "../Components/TableCart";
 import Navigation from "../Components/Navigation";
 
+//Actions
+import transactionActions from '../Redux/actions/transaction';
+
 const Cart = () => {
+  const {
+    dataListCart,
+    pageInfo,
+    isListCartError,
+    isListCartLoading,
+  } = useSelector((state) => state.cart);
+  const quantityCounter = useSelector((state) => state.quantityCounter);
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  useEffect(() => {
+    dispatch(transactionActions.listCart(auth.token));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const checkout = async () => {
+    await dataListCart.map(async (item) => {
+      dispatch(transactionActions.checkoutCart(auth.token, item.id, item.quantity));
+    });
+    history.push("/checkout");
+    dispatch(transactionActions.listCart(auth.token));
+  };
   return (
     <>
       <Navigation />
@@ -67,9 +96,16 @@ const Cart = () => {
               </Row>
             </styles.Section>
             <styles.Section>
-              <Button color="warning" className="font-weight-bold text-white">
-                PROCEED TO CHECKOUT
-              </Button>
+              {!isListCartLoading && (
+                <Button
+                  color="warning"
+                  disabled={isListCartError}
+                  className="font-weight-bold text-white"
+                  onClick={checkout}
+                >
+                  PROCEED TO CHECKOUT
+                </Button>
+              )}
             </styles.Section>
           </Col>
         </Row>

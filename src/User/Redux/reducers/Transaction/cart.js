@@ -5,13 +5,14 @@ const initialState = {
   pageInfo: {},
   dataCart: {},
   isLoading: false,
-  alertMsg: '',
+  alertMsg: "",
   totalAmount: 0,
 
   isAddCartError: false,
   isDeleteCartLoading: false,
   isDeleteCartError: false,
   isCheckoutError: false,
+  isCheckoutLoading: false,
   isDiscardCheckoutError: false,
   isListCartError: false,
   isListCartLoading: false,
@@ -139,13 +140,13 @@ export default (state = initialState, action) => {
     case 'LIST_CART_OUT_PENDING': {
       return {
         ...state,
-        isLoading: true,
+        isCheckoutLoading: true,
       };
     }
     case 'LIST_CART_OUT_REJECTED': {
       return {
         ...state,
-        isLoading: false,
+        isCheckoutLoading: false,
         isListCheckoutCartError: true,
         alertMsg: action.payload,
       };
@@ -153,7 +154,7 @@ export default (state = initialState, action) => {
     case 'LIST_CART_OUT_FULFILLED': {
       return {
         ...state,
-        isLoading: false,
+        isCheckoutLoading: false,
         isListCheckoutCartError: false,
         dataListCartOut: action.payload.data.results,
         pageInfo: action.payload.data.pageInfo,

@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory, Redirect, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { createGlobalStyle } from "styled-components";
-import { Container, Row, Col, Button } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Spinner,
+  Modal,
+  ModalFooter,
+  ModalBody,
+} from "reactstrap";
 import numeral from "numeral";
 import StarRatingComponent from "react-star-rating-component";
 import { FaPlus, FaMinus } from "react-icons/fa";
@@ -22,17 +31,18 @@ const DetailProduct = () => {
   );
   const {
     dataReviews,
-    pageInfo,
     isReviewsLoading,
     isReviewsError,
   } = useSelector((state) => state.detailProduct);
   const { dataListCart } = useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cart);
   const catalog = useSelector((state) => state.catalogResults);
   const auth = useSelector((state) => state.auth);
   const [choiceColor, setChoiceColor] = useState({});
   const [choiceSize, setChoiceSize] = useState([]);
   const [addCart, setAddCart] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [error, setError] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
@@ -55,6 +65,13 @@ const DetailProduct = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataProduct]);
+
+  useEffect(() => {
+    if (!cart.isLoading && cart.isAddCartError) {
+      setError(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart.isAddCartError]);
 
   const addToCart = async () => {
     if (auth.token.length) {
@@ -105,6 +122,33 @@ const DetailProduct = () => {
       <Navigation />
       <styles.GlobalStyle />
       <styles.Container>
+        {error ? (
+          <Modal isOpen={error} toggle={() => setError(!error)}>
+            <ModalBody className="text-danger text-left h5">
+              failed to add this product to the bag
+            </ModalBody>
+            <ModalFooter>
+              <Button color="secondary" onClick={() => setError(!error)}>
+                CLOSE
+              </Button>
+            </ModalFooter>
+          </Modal>
+        ) : cart.isLoading ? (
+          <styles.Spinner
+            type="grow"
+          />
+        ) : (
+          <Modal isOpen={addCart} toggle={() => setAddCart(!addCart)}>
+            <ModalBody className="text-success text-left h5">
+              Success Add this Product into the Bag
+            </ModalBody>
+            <ModalFooter>
+              <Button color="secondary" onClick={() => setAddCart(!addCart)}>
+                CLOSE
+              </Button>
+            </ModalFooter>
+          </Modal>
+        )}
         <styles.ContainerRow>
           <Col xs={6} className="ml-0 pl-0">
             <Row>
@@ -386,7 +430,7 @@ const styles = {
   ColorContainer: styled.div`
     width: 75%;
     height: 90%;
-    border: ${props => props.isSelect ? '1px solid #102939' : 'none'};
+    border: ${(props) => (props.isSelect ? "1px solid #102939" : "none")};
     padding: 2px;
   `,
 
@@ -400,9 +444,22 @@ const styles = {
     width: 80%;
     height: 90%;
     border: 1px solid #102939;
-    background-color: ${props => props.isSelect ? '#1bc29b' : 'transparent'};
+    background-color: ${(props) =>
+      props.isSelect ? "#1bc29b" : "transparent"};
     color: #102939;
     font-weight: bold;
+  `,
+
+  Spinner: styled(Spinner)`
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 2;
+    width: 5rem;
+    height: 5rem;
+    color: #1bc29b;
   `,
 };
 

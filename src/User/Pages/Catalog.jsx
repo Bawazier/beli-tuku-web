@@ -37,9 +37,7 @@ const Catalog = () => {
   }, [pageInfo]);
 
   const detailProduct = (id_product) => {
-    dispatch(HomeActions.detailProduct(id_product));
-    history.push("/product");
-    dispatch(HomeActions.detailProductReviews(id_product));
+    history.push(`/product/${id_product}`);
   };
 
   const nextPage = (next) => {

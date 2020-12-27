@@ -37,7 +37,7 @@ class App extends React.Component {
           />
           <Route path="/" render={(props) => <Home {...props} />} exact />
           <Route
-            path="/product"
+            path="/product/:id"
             render={(props) => <DetailProduct {...props} />}
             exact
           />

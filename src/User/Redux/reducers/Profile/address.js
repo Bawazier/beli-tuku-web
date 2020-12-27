@@ -122,6 +122,14 @@ export default (state = initialState, action) => {
         isDeleteError: false,
       };
     }
+    case 'RESET_FORM': {
+      return {
+        ...state,
+        isLoading: false,
+        isGetError: false,
+        dataGet: {},
+      };
+    }
     case 'LOGOUT': {
       return initialState;
     }
