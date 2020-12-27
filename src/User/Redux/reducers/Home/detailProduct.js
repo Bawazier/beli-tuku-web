@@ -18,6 +18,7 @@ export default (state = initialState, action) => {
       };
     }
     case 'GET_DETAIL_PRODUCT_REJECTED': {
+      localStorage.removeItem("detailProduct");
       return {
         ...state,
         isLoading: false,
@@ -31,6 +32,13 @@ export default (state = initialState, action) => {
         isLoading: false,
         isError: false,
         dataProduct: action.payload.data.results,
+      };
+    }
+    case 'SET_DETAIL_PRODUCT': {
+      localStorage.removeItem("detailProduct");
+      return {
+        ...state,
+        dataProduct: action.payload,
       };
     }
     case 'GET_DETAIL_PRODUCT_REVIEWS_PENDING': {
@@ -57,6 +65,7 @@ export default (state = initialState, action) => {
       };
     }
     case 'LOGOUT': {
+      localStorage.removeItem("detailProduct");
       return initialState;
     }
     default: {

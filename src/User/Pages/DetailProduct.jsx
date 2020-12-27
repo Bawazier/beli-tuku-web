@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory, Redirect } from "react-router-dom";
+import { Link, useHistory, Redirect, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { createGlobalStyle } from "styled-components";
-import {Container, Row, Col, Button} from 'reactstrap';
+import { Container, Row, Col, Button } from "reactstrap";
 import numeral from "numeral";
 import StarRatingComponent from "react-star-rating-component";
+import { FaPlus, FaMinus } from "react-icons/fa";
 
 //Components
 import Navigation from "../Components/Navigation";
+import CardProduct from "../Components/CardProduct";
 
 //Actions
-import HomeActions from '../Redux/actions/home';
-import transactionActions from '../Redux/actions/transaction';
+import HomeActions from "../Redux/actions/home";
+import transactionActions from "../Redux/actions/transaction";
 
 const DetailProduct = () => {
   const { REACT_APP_API_URL } = process.env;
@@ -30,8 +32,29 @@ const DetailProduct = () => {
   const [choiceColor, setChoiceColor] = useState({});
   const [choiceSize, setChoiceSize] = useState([]);
   const [addCart, setAddCart] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
   const history = useHistory();
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (!id) {
+      history.goBack();
+    } else {
+      dispatch(HomeActions.detailProduct(id));
+      dispatch(HomeActions.detailProductReviews(id));
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch(
+      HomeActions.catalogSearch(
+        "",
+        (dataProduct.Category && dataProduct.Category.name) || ""
+      )
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataProduct]);
 
   const addToCart = async () => {
     if (auth.token.length) {
@@ -40,7 +63,7 @@ const DetailProduct = () => {
         transactionActions.addToCart(
           auth.token,
           dataProduct.id,
-          1,
+          quantity,
           choiceColor.id || dataProduct.ProductColors[0].id,
           choiceSize.id || dataProduct.ProductSizes[0].id
         )
@@ -72,6 +95,7 @@ const DetailProduct = () => {
   };
 
   const detailProduct = (id_product) => {
+    history.push(`/product/${id_product}`);
     dispatch(HomeActions.detailProduct(id_product));
     dispatch(HomeActions.detailProductReviews(id_product));
   };
@@ -80,122 +104,136 @@ const DetailProduct = () => {
     <>
       <Navigation />
       <styles.GlobalStyle />
-      {!isLoading && !isError && dataProduct.length ? (
-        <styles.Container>
-          <styles.ContainerRow>
-            <Col xs={6} className="ml-0 pl-0">
+      <styles.Container>
+        <styles.ContainerRow>
+          <Col xs={6} className="ml-0 pl-0">
+            <Row>
+              {!isLoading &&
+                !isError &&
+                dataProduct.ProductImages &&
+                dataProduct.ProductImages.map((item) => (
+                  <styles.ImageCol xs={dataProduct.ProductImages.length > 2 ? 6 : 12}>
+                    <img
+                      src={
+                        item.picture
+                          ? REACT_APP_API_URL + "/" + item.picture
+                          : require("../Assets/Images/Logo.png")
+                      }
+                      alt="Card image cap"
+                      className="w-100 h-100"
+                    />
+                  </styles.ImageCol>
+                ))}
+            </Row>
+          </Col>
+          <Col xs={6} className="mr-0 pr-0">
+            <h2>{dataProduct.name || "..."}</h2>
+            <h6 className="text-muted">
+              {(dataProduct.Store && dataProduct.Store.name) || ""}
+            </h6>
+            <StarRatingComponent
+              name="rate1"
+              starCount={5}
+              starColor="#1bc29b"
+              emptyStarColor="#102939"
+              value={dataProduct.ratings || 0}
+              editable={false}
+            />
+            <styles.Section>
+              <h6 className="text-muted">Price</h6>
+              <h4 className="font-weight-bold">
+                Rp.
+                {numeral(dataProduct.price || 0)
+                  .format(0, 0)
+                  .toString()
+                  .replace(",", ".")}
+                ,-
+              </h4>
+            </styles.Section>
+            <styles.Section className="w-80">
+              <h6 className="text-muted">Color</h6>
               <Row>
                 {!isLoading &&
                   !isError &&
-                  dataProduct &&
-                  dataProduct.ProductImages.map((item) => (
-                    <styles.ImageCol xs={6}>
-                      <img
-                        src={
-                          item.picture
-                            ? REACT_APP_API_URL + "/" + item.picture
-                            : require("../Assets/Images/Logo.png")
-                        }
-                        alt="Card image cap"
-                        className="w-100 h-100"
-                      />
-                    </styles.ImageCol>
+                  dataProduct.ProductColors &&
+                  dataProduct.ProductColors.map((item) => (
+                    <Col xs={2}>
+                      <styles.ColorContainer
+                        className="rounded-circle"
+                        isSelect={choiceColor.id === item.id}
+                      >
+                        <styles.ColorButton
+                          onClick={() => setChoiceColor(item)}
+                          className="rounded-circle"
+                          bgColor={item.hexa}
+                          disabled={item.status !== "available" ? true : false}
+                        >
+                          &nbsp;
+                        </styles.ColorButton>
+                      </styles.ColorContainer>
+                    </Col>
                   ))}
               </Row>
-            </Col>
-            <Col xs={6} className="mr-0 pr-0">
-              <h2>{dataProduct.name || "..."}</h2>
-              <h6 className="text-muted">
-                {(dataProduct.Store && dataProduct.Store.name) || ""}
-              </h6>
-              <StarRatingComponent
-                name="rate1"
-                starCount={5}
-                starColor="#1bc29b"
-                emptyStarColor="#102939"
-                value={dataProduct.ratings || 0}
-                editable={false}
-              />
-              <styles.Section>
-                <h6 className="text-muted">Price</h6>
-                <h4 className="font-weight-bold">
-                  Rp.
-                  {numeral(dataProduct.price || 0)
-                    .format(0, 0)
-                    .toString()
-                    .replace(",", ".")}
-                  ,-
-                </h4>
-              </styles.Section>
-              <styles.Section className="w-80">
-                <h6 className="text-muted">Color</h6>
-                <Row>
-                  {!isLoading &&
-                    !isError &&
-                    dataProduct &&
-                    dataProduct.ProductColors.map((item) => (
-                      <Col xs={2}>
-                        <styles.ColorContainer className="rounded-circle">
-                          <styles.ColorButton
-                            onClick={() => setChoiceColor(item)}
-                            className="rounded-circle"
-                            bgColor={item.hexa}
-                            disabled={
-                              item.status !== "available" ? true : false
-                            }
-                          >
-                            &nbsp;
-                          </styles.ColorButton>
-                        </styles.ColorContainer>
-                      </Col>
-                    ))}
-                </Row>
-              </styles.Section>
-              <styles.Section>
-                <h6 className="text-muted">Size</h6>
-                <Row>
-                  {!isLoading &&
-                    !isError &&
-                    dataProduct &&
-                    dataProduct.ProductSizes.map((item) => (
-                      <Col xs={2}>
-                        <div>
-                          <styles.SizeButton
-                            onClick={() => setChoiceSize(item)}
-                            outline={
-                              choiceSize.size === item.size ? false : true
-                            }
-                          >
-                            {item.size}
-                          </styles.SizeButton>
-                        </div>
-                      </Col>
-                    ))}
-                </Row>
-              </styles.Section>
-              <styles.Section>
-                <h6 className="text-muted">Quantity</h6>
-                <Row className="align-items-center">
-                  <Col xs={2} className="pr-0 mr-0">
-                    <div>
-                      <styles.CounterButton>-</styles.CounterButton>
-                    </div>
-                  </Col>
-                  <Col xs={1} className="p-0 m-0">
-                    <h5 className="text-center font-weight-bold">1</h5>
-                  </Col>
-                  <Col xs={2} className="pl-0 ml-0">
-                    <div>
-                      <styles.CounterButton>+</styles.CounterButton>
-                    </div>
-                  </Col>
-                </Row>
-              </styles.Section>
-              <styles.Section className="mt-5">
+            </styles.Section>
+            <styles.Section>
+              <h6 className="text-muted">Size</h6>
+              <Row>
+                {!isLoading &&
+                  !isError &&
+                  dataProduct.ProductSizes &&
+                  dataProduct.ProductSizes.map((item) => (
+                    <Col xs={2}>
+                      <div>
+                        <styles.SizeButton
+                          onClick={() => setChoiceSize(item)}
+                          isSelect={choiceSize.size === item.size}
+                        >
+                          {item.size}
+                        </styles.SizeButton>
+                      </div>
+                    </Col>
+                  ))}
+              </Row>
+            </styles.Section>
+            <styles.Section>
+              <h6 className="text-muted">Quantity</h6>
+              <Row className="align-items-center">
+                <Col xs={2}>
+                  <styles.CounterButton
+                    color="success"
+                    className="w-100 text-center"
+                    onClick={() =>
+                      quantity > 1 ? setQuantity(quantity - 1) : quantity
+                    }
+                  >
+                    <FaMinus />
+                  </styles.CounterButton>
+                </Col>
+                <Col xs={2}>
+                  <h4 className="w-100 text-center">{quantity}</h4>
+                </Col>
+                <Col xs={2}>
+                  <styles.CounterButton
+                    color="success"
+                    className="w-100 text-center"
+                    onClick={() =>
+                      quantity < dataProduct.stock
+                        ? setQuantity(quantity + 1)
+                        : quantity
+                    }
+                  >
+                    <FaPlus />
+                  </styles.CounterButton>
+                </Col>
+              </Row>
+            </styles.Section>
+            <styles.Section className="mt-5">
+              {!isLoading && !isError && (
                 <Row>
                   <Col xs={3}>
                     <Button
                       outline
+                      disabled
                       color="warning"
                       className="w-100 font-weight-bold"
                     >
@@ -205,68 +243,93 @@ const DetailProduct = () => {
                   <Col xs={4}>
                     <Button
                       outline
+                      disabled
                       color="warning"
                       className="w-100 font-weight-bold"
+                      onClick={buy}
+                    >
+                      Buy Now
+                    </Button>
+                  </Col>
+                  <Col xs={5}>
+                    <Button
+                      color="warning"
+                      className="w-100 font-weight-bold"
+                      onClick={addToCart}
                     >
                       Add Bag
                     </Button>
                   </Col>
-                  <Col xs={5}>
-                    <Button color="warning" className="w-100 font-weight-bold">
-                      Buy Now
-                    </Button>
-                  </Col>
                 </Row>
-              </styles.Section>
-            </Col>
-          </styles.ContainerRow>
-        </styles.Container>
-      ) : (
-        <Redirect
-          to={{
-            pathname: "/",
-          }}
-        />
-      )}
+              )}
+            </styles.Section>
+          </Col>
+        </styles.ContainerRow>
+      </styles.Container>
       <styles.Container>
         <styles.SectionTitle>
           <h4>Product Information</h4>
         </styles.SectionTitle>
         <styles.Section>
           <h5>Condition</h5>
-          <h6 className="text-success">New</h6>
+          <h6 className="text-success">
+            {(dataProduct.Condition && dataProduct.Condition.status) || ""}
+          </h6>
         </styles.Section>
         <styles.Section>
           <h5>Description</h5>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec non
-            magna rutrum, pellentesque augue eu, sagittis velit. Phasellus quis
-            laoreet dolor. Fusce nec pharetra quam. Interdum et malesuada fames
-            ac ante ipsum primis in faucibus. Praesent sed enim vel turpis
-            blandit imperdiet ac ac felis. Etiam tincidunt tristique placerat.
-            Pellentesque a consequat mauris, vel suscipit ipsum. Donec ac mauris
-            vitae diam commodo vehicula. Donec quam elit, sollicitudin eu nisl
-            at, ornare suscipit magna. Donec non magna rutrum, pellentesque
-            augue eu, sagittis velit. Phasellus quis laoreet dolor. Fusce nec
-            pharetra quam. Interdum et malesuada fames ac ante ipsum primis in
-            faucibus. Praesent sed enim vel turpis blandit imperdiet ac ac
-            felis. In ultricies rutrum tempus. Mauris vel molestie orci.
-          </p>
+          <p>{dataProduct.description || ""}</p>
         </styles.Section>
+        {!isReviewsLoading && !isReviewsError && dataReviews.length && (
+          <styles.SectionTitle>
+            <h4>Product Reviews</h4>
+            <div>
+              <h1>{dataReviews[0].rating || 0}</h1>
+              <StarRatingComponent
+                name="rate2"
+                starCount={5}
+                starColor="#1bc29b"
+                emptyStarColor="#102939"
+                value={dataReviews[0].rating || 0}
+                editable={false}
+              />
+            </div>
+          </styles.SectionTitle>
+        )}
+        {!isReviewsLoading && isReviewsError && (
+          <styles.SectionTitle>
+            <h4>Product Reviews</h4>
+            <div>
+              <h5 className="text-muted">
+                There is no review for this product
+              </h5>
+            </div>
+          </styles.SectionTitle>
+        )}
+      </styles.Container>
+      <styles.Container className="border-top">
         <styles.SectionTitle>
-          <h4>Product Reviews</h4>
+          <h3>You can also like this</h3>
           <div>
-            <h1>5.0</h1>
-            <StarRatingComponent
-              name="rate2"
-              starCount={5}
-              starColor="#1bc29b"
-              emptyStarColor="#102939"
-              value={4}
-              editable={false}
-            />
+            <h6 className="text-muted">You’ve never seen it before!</h6>
           </div>
         </styles.SectionTitle>
+        <Row className="mt-3">
+          {!catalog.isLoading &&
+            !catalog.isError &&
+            catalog.data.map((item) => (
+              <Col xs={3} className="mb-3">
+                <CardProduct
+                  productDetail={() => detailProduct(item.id)}
+                  productImage={item.ProductImages[0].picture}
+                  productStore={item.Store.name}
+                  productName={item.name || ""}
+                  productPrice={item.price}
+                  productRating={item.ratings}
+                />
+              </Col>
+            ))}
+        </Row>
       </styles.Container>
     </>
   );
@@ -308,31 +371,29 @@ const styles = {
 
   CounterButton: styled(Button)`
     background-color: #1bc29b;
-    width: 80%;
-    font-size: 20px;
-    font-weight: bold;
     color: #102939;
   `,
 
   ColorContainer: styled.div`
-    width: 80%;
+    width: 75%;
     height: 90%;
-    border: 1px solid #102939;
-    padding: 5px;
+    border: ${props => props.isSelect ? '1px solid #102939' : 'none'};
+    padding: 2px;
   `,
 
   ColorButton: styled(Button)`
     width: 100%;
     height: 100%;
-    background-color: ${props => props.bgColor}
+    background-color: ${(props) => props.bgColor};
   `,
 
   SizeButton: styled(Button)`
     width: 80%;
     height: 90%;
     border: 1px solid #102939;
-    background-color: #1bc29b;
+    background-color: ${props => props.isSelect ? '#1bc29b' : 'transparent'};
     color: #102939;
+    font-weight: bold;
   `,
 };
 
