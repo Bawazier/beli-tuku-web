@@ -34,7 +34,7 @@ const FormAddress = (props) => {
         addressName: address.dataGet.name || "",
         postalCode: address.dataGet.postalCode || "",
         tlp: address.dataGet.recipientTlp || "",
-        isPrimary: false,
+        isPrimary: address.dataGet.isPrimary || false,
       }}
       validationSchema={validationSchema}
       onSubmit={async (values) => {
@@ -47,19 +47,16 @@ const FormAddress = (props) => {
           recipientTlp: values.tlp || null,
           isPrimary: values.isPrimary,
         };
-        if(props.isUpdate){
+        if (props.isUpdate) {
           await dispatch(
-            addressActions.updateAddress(
-              auth.token,
-              address.dataGet.id,
-              data,
-            ),
+            addressActions.updateAddress(auth.token, address.dataGet.id, data)
           );
         } else {
           await dispatch(addressActions.postAddress(auth.token, data));
         }
         props.close();
         dispatch(addressActions.listAddress(auth.token));
+        dispatch(addressActions.resetForm());
       }}
     >
       {({
@@ -193,17 +190,17 @@ const FormAddress = (props) => {
             </Col>
           </Row>
           {props.isUpdate && (
-              <FormGroup check>
-                <Field
-                  className="mr-2"
-                  type="checkbox"
-                  name="isPrimary"
-                  id="isPrimary"
-                />
-                <Label for="exampleCheck" check>
-                  Make it the primary address
-            </Label>
-              </FormGroup>
+            <FormGroup check>
+              <Field
+                className="mr-2"
+                type="checkbox"
+                name="isPrimary"
+                id="isPrimary"
+              />
+              <Label for="exampleCheck" check>
+                Make it the primary address
+              </Label>
+            </FormGroup>
           )}
           <Row className="align-items-center justify-content-end">
             <Col xs={2}>
@@ -211,7 +208,10 @@ const FormAddress = (props) => {
                 block
                 outline
                 color="warning"
-                onClick={props.close}
+                onClick={() => {
+                  props.close();
+                  dispatch(addressActions.resetForm());
+                }}
                 className="font-weight-bold"
               >
                 Cancel

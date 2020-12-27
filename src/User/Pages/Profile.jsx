@@ -280,6 +280,7 @@ const Profile = () => {
                         address={item.address}
                         region={item.region}
                         postalCode={item.postalCode}
+                        isPrimary={item.isPrimary}
                       />
                     ))}
                 </CardBody>
