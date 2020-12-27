@@ -12,6 +12,10 @@ import {
   Form,
   Input,
   FormGroup,
+  Spinner,
+  Modal,
+  ModalFooter,
+  ModalBody,
 } from "reactstrap";
 
 //Actions
@@ -33,7 +37,7 @@ const ConfirmPass = () => {
   });
 
   useEffect(() => {
-    if (!auth.isLoading && auth.isError) {
+    if (!auth.isForgotPassLoading && auth.isForgotPassError) {
       setError(!error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,105 +50,126 @@ const ConfirmPass = () => {
         fluid
         className="d-flex align-items-center justify-content-center"
       >
-        <Row className="w-50 align-items-center justify-content-center">
-          <Col
-            xs={12}
-            className="d-flex align-items-center justify-content-center"
-          >
-            <Link to="/">
-              <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
-            </Link>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <styles.Message>Reset password</styles.Message>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <styles.Message className="text-danger">
-              You need to change your password to activate your account
-            </styles.Message>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <Formik
-              initialValues={{
-                newPassword: "",
-                confirmPassword: "",
-              }}
-              validationSchema={validationSchema}
-              onSubmit={async (values) => {
-                const data = {
-                  newPassword: values.newPassword,
-                  confirmNewPassword: values.confirmPassword,
-                };
-                console.log(auth.emailValidData.id);
-                await dispatch(
-                  AuthActions.forgotPass(auth.emailValidData.id, data)
-                );
-                history.push("/login");
-              }}
+        {error ? (
+          <Modal isOpen={error} toggle={() => setError(!error)}>
+            <ModalBody className="text-danger text-center h5">
+              Password reset failed
+            </ModalBody>
+            <ModalFooter>
+              <Button color="secondary" onClick={() => setError(!error)}>
+                TRY AGAIN
+              </Button>
+            </ModalFooter>
+          </Modal>
+        ) : auth.isForgotPassLoading ? (
+          <Spinner
+            style={{ width: "5rem", height: "5rem", color: "#1bc29b" }}
+            type="grow"
+          />
+        ) : (
+          <Row className="w-50 align-items-center justify-content-center">
+            <Col
+              xs={12}
+              className="d-flex align-items-center justify-content-center"
             >
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                isSubmitting,
-                touched,
-                values,
-                errors,
-              }) => (
-                <Form className="w-50" onSubmit={handleSubmit}>
-                  <FormGroup>
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.newPassword}
-                      type="password"
-                      className="form-control"
-                      id="newPassword"
-                      name="newPassword"
-                      placeholder="New Password"
-                      required
-                    />
-                    <h6 className="text-danger pt-2">
-                      {errors.newPassword && touched.newPassword
-                        ? errors.newPassword
-                        : null}
-                    </h6>
-                  </FormGroup>
-                  <FormGroup>
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.confirmPassword}
-                      type="password"
-                      className="form-control"
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      placeholder="Confirmation New Password"
-                      required
-                    />
-                    <h6 className="text-danger pt-2">
-                      {errors.confirmPassword && touched.confirmPassword
-                        ? errors.confirmPassword
-                        : null}
-                    </h6>
-                  </FormGroup>
-                  <styles.Button block type="submit" disabled={isSubmitting}>
-                    RESET
-                  </styles.Button>
-                </Form>
-              )}
-            </Formik>
-          </Col>
-        </Row>
+              <Link to="/">
+                <styles.Logo
+                  src={require("../Assets/Images/Logo.png")}
+                  alt=""
+                />
+              </Link>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <styles.Message>Reset password</styles.Message>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <styles.Message className="text-danger">
+                You need to change your password to activate your account
+              </styles.Message>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <Formik
+                initialValues={{
+                  newPassword: "",
+                  confirmPassword: "",
+                }}
+                validationSchema={validationSchema}
+                onSubmit={async (values) => {
+                  const data = {
+                    newPassword: values.newPassword,
+                    confirmNewPassword: values.confirmPassword,
+                  };
+                  console.log(auth.emailValidData.id);
+                  await dispatch(
+                    AuthActions.forgotPass(auth.emailValidData.id, data)
+                  );
+                  history.push("/login");
+                }}
+              >
+                {({
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  isSubmitting,
+                  touched,
+                  values,
+                  errors,
+                }) => (
+                  <Form className="w-50" onSubmit={handleSubmit}>
+                    <FormGroup>
+                      <Input
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.newPassword}
+                        type="password"
+                        className="form-control"
+                        id="newPassword"
+                        name="newPassword"
+                        placeholder="New Password"
+                        required
+                      />
+                      <h6 className="text-danger pt-2">
+                        {errors.newPassword && touched.newPassword
+                          ? errors.newPassword
+                          : null}
+                      </h6>
+                    </FormGroup>
+                    <FormGroup>
+                      <Input
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.confirmPassword}
+                        type="password"
+                        className="form-control"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Confirmation New Password"
+                        required
+                      />
+                      <h6 className="text-danger pt-2">
+                        {errors.confirmPassword && touched.confirmPassword
+                          ? errors.confirmPassword
+                          : null}
+                      </h6>
+                    </FormGroup>
+                    <styles.Button block type="submit" disabled={isSubmitting}>
+                      RESET
+                    </styles.Button>
+                  </Form>
+                )}
+              </Formik>
+            </Col>
+          </Row>
+        )}
       </styles.Container>
     </>
   );

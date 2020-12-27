@@ -13,6 +13,10 @@ import {
   Form,
   Input,
   FormGroup,
+  Spinner,
+  Modal,
+  ModalFooter,
+  ModalBody,
 } from "reactstrap";
 
 //Actions
@@ -35,15 +39,16 @@ const Login = () => {
 
   useEffect(() => {
     dispatch(AuthActions.logout());
+    setError(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!auth.isLoading && auth.isError) {
-      setError(!error);
+      setError(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
+  }, [auth.isError]);
 
   return (
     <>
@@ -52,119 +57,140 @@ const Login = () => {
         fluid
         className="d-flex align-items-center justify-content-center"
       >
-        <Row className="w-50 align-items-center justify-content-center">
-          <Col
-            xs={12}
-            className="d-flex align-items-center justify-content-center"
-          >
-            <Link to="/">
-              <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
-            </Link>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <styles.Message>Please login with your account</styles.Message>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <ButtonGroup>
-              <styles.RoleButton>Customer</styles.RoleButton>
-              <styles.RoleButton disabled>Seller</styles.RoleButton>
-            </ButtonGroup>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <Formik
-              initialValues={{
-                email: "",
-                password: "",
-              }}
-              validationSchema={validationSchema}
-              onSubmit={async (values) => {
-                const data = {
-                  email: values.email,
-                  password: values.password,
-                };
-                await dispatch(AuthActions.login(data));
-                history.push("/");
-              }}
+        {error ? (
+          <Modal isOpen={error} toggle={() => setError(!error)}>
+            <ModalBody className="text-danger text-center h5">
+              Please enter your email and password correctly
+            </ModalBody>
+            <ModalFooter>
+              <Button color="secondary" onClick={() => setError(!error)}>
+                TRY AGAIN
+              </Button>
+            </ModalFooter>
+          </Modal>
+        ) : auth.isLoading ? (
+          <Spinner
+            style={{ width: "5rem", height: "5rem", color: "#1bc29b" }}
+            type="grow"
+          />
+        ) : (
+          <Row className="w-50 align-items-center justify-content-center">
+            <Col
+              xs={12}
+              className="d-flex align-items-center justify-content-center"
             >
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                isSubmitting,
-                touched,
-                values,
-                errors,
-              }) => (
-                <Form className="w-50" onSubmit={handleSubmit}>
-                  <FormGroup>
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.email}
-                      type="email"
-                      className="form-control"
-                      id="email"
-                      name="email"
-                      placeholder="Email"
-                      required
-                      autoFocus
-                    />
-                    <h6 className="text-danger pt-2">
-                      {errors.email && touched.email ? errors.email : null}
-                    </h6>
-                  </FormGroup>
-                  <FormGroup>
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.password}
-                      type="password"
-                      className="form-control"
-                      id="password"
-                      name="password"
-                      placeholder="Password"
-                      required
-                    />
-                    <h6 className="text-danger pt-2">
-                      {errors.password && touched.password
-                        ? errors.password
-                        : null}
-                    </h6>
-                  </FormGroup>
-                  <Link to="/reset">
-                    <h6 className="text-warning text-right">
-                      Forgot password ?
-                    </h6>
-                  </Link>
-                  <styles.Button block type="submit" disabled={isSubmitting}>
-                    LOGIN
-                  </styles.Button>
-                </Form>
-              )}
-            </Formik>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <styles.Message>Don't have a Shoppe.id account?</styles.Message>
-            &nbsp;
-            <Link to="/signup">
-              <styles.Message className="text-warning text-right">
-                Register
-              </styles.Message>
-            </Link>
-          </Col>
-        </Row>
+              <Link to="/">
+                <styles.Logo
+                  src={require("../Assets/Images/Logo.png")}
+                  alt=""
+                />
+              </Link>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <styles.Message>Please login with your account</styles.Message>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <ButtonGroup>
+                <styles.RoleButton>Customer</styles.RoleButton>
+                <styles.RoleButton disabled>Seller</styles.RoleButton>
+              </ButtonGroup>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <Formik
+                initialValues={{
+                  email: "",
+                  password: "",
+                }}
+                validationSchema={validationSchema}
+                onSubmit={async (values) => {
+                  const data = {
+                    email: values.email,
+                    password: values.password,
+                  };
+                  await dispatch(AuthActions.login(data));
+                  history.push("/");
+                }}
+              >
+                {({
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  isSubmitting,
+                  touched,
+                  values,
+                  errors,
+                }) => (
+                  <Form className="w-50" onSubmit={handleSubmit}>
+                    <FormGroup>
+                      <Input
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.email}
+                        type="email"
+                        className="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="Email"
+                        required
+                        autoFocus
+                      />
+                      <h6 className="text-danger pt-2">
+                        {errors.email && touched.email ? errors.email : null}
+                      </h6>
+                    </FormGroup>
+                    <FormGroup>
+                      <Input
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.password}
+                        type="password"
+                        className="form-control"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                        required
+                      />
+                      <h6 className="text-danger pt-2">
+                        {errors.password && touched.password
+                          ? errors.password
+                          : null}
+                      </h6>
+                    </FormGroup>
+                    <Link to="/reset">
+                      <h6 className="text-warning text-right">
+                        Forgot password ?
+                      </h6>
+                    </Link>
+                    <styles.Button block type="submit" disabled={isSubmitting}>
+                      LOGIN
+                    </styles.Button>
+                  </Form>
+                )}
+              </Formik>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <styles.Message>Don't have a Shoppe.id account?</styles.Message>
+              &nbsp;
+              <Link to="/signup">
+                <styles.Message className="text-warning text-right">
+                  Register
+                </styles.Message>
+              </Link>
+            </Col>
+          </Row>
+        )}
       </styles.Container>
     </>
   );

@@ -13,6 +13,10 @@ import {
   Form,
   Input,
   FormGroup,
+  Spinner,
+  Modal,
+  ModalFooter,
+  ModalBody,
 } from "reactstrap";
 
 //Actions
@@ -38,7 +42,7 @@ const Signup = () => {
   }, []);
 
   useEffect(() => {
-    if (!auth.isLoading && auth.isError) {
+    if (!auth.isSignupLoading && auth.isSignupError) {
       setError(!error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,133 +55,154 @@ const Signup = () => {
         fluid
         className="d-flex align-items-center justify-content-center"
       >
-        <Row className="w-50 align-items-center justify-content-center">
-          <Col
-            xs={12}
-            className="d-flex align-items-center justify-content-center"
-          >
-            <Link to="/">
-              <styles.Logo src={require("../Assets/Images/Logo.png")} alt="" />
-            </Link>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <styles.Message>Please sign up with your account</styles.Message>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <ButtonGroup>
-              <styles.RoleButton>Customer</styles.RoleButton>
-              <styles.RoleButton disabled>Seller</styles.RoleButton>
-            </ButtonGroup>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <Formik
-              initialValues={{
-                name: "",
-                email: "",
-                password: "",
-              }}
-              validationSchema={validationSchema}
-              onSubmit={async (values) => {
-                const data = {
-                  name: values.name,
-                  email: values.email,
-                  password: values.password,
-                };
-                await dispatch(AuthActions.signup(data));
-                history.push("/login");
-              }}
+        {error ? (
+          <Modal isOpen={error} toggle={() => setError(!error)}>
+            <ModalBody className="text-danger text-center h5">
+              Email has been used, please try again
+            </ModalBody>
+            <ModalFooter>
+              <Button color="secondary" onClick={() => setError(!error)}>
+                TRY AGAIN
+              </Button>
+            </ModalFooter>
+          </Modal>
+        ) : auth.isSignupLoading ? (
+          <Spinner
+            style={{ width: "5rem", height: "5rem", color: "#1bc29b" }}
+            type="grow"
+          />
+        ) : (
+          <Row className="w-50 align-items-center justify-content-center">
+            <Col
+              xs={12}
+              className="d-flex align-items-center justify-content-center"
             >
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                isSubmitting,
-                touched,
-                values,
-                errors,
-              }) => (
-                <Form className="w-50" onSubmit={handleSubmit}>
-                  <FormGroup>
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.name}
-                      type="text"
-                      className="form-control"
-                      id="name"
-                      name="name"
-                      placeholder="Name"
-                      required
-                      autoFocus
-                    />
-                    <h6 className="text-danger pt-2">
-                      {errors.name && touched.name ? errors.name : null}
-                    </h6>
-                  </FormGroup>
-                  <FormGroup>
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.email}
-                      type="email"
-                      className="form-control"
-                      id="email"
-                      name="email"
-                      placeholder="Email"
-                      required
-                    />
-                    <h6 className="text-danger pt-2">
-                      {errors.email && touched.email ? errors.email : null}
-                    </h6>
-                  </FormGroup>
-                  <FormGroup>
-                    <Input
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.password}
-                      type="password"
-                      className="form-control"
-                      id="password"
-                      name="password"
-                      placeholder="Password"
-                      required
-                    />
-                    <h6 className="text-danger pt-2">
-                      {errors.password && touched.password
-                        ? errors.password
-                        : null}
-                    </h6>
-                  </FormGroup>
-                  <h6 className="text-warning text-right">&nbsp;</h6>
-                  <styles.Button block type="submit" disabled={isSubmitting}>
-                    SIGNUP
-                  </styles.Button>
-                </Form>
-              )}
-            </Formik>
-          </Col>
-          <Col
-            xs={12}
-            className="m-3 d-flex align-items-center justify-content-center"
-          >
-            <styles.Message>Already have a Beli Tuku account?</styles.Message>
-            &nbsp;
-            <Link to="/login">
-              <styles.Message className="text-warning text-right">
-                Login
-              </styles.Message>
-            </Link>
-          </Col>
-        </Row>
+              <Link to="/">
+                <styles.Logo
+                  src={require("../Assets/Images/Logo.png")}
+                  alt=""
+                />
+              </Link>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <styles.Message>Please sign up with your account</styles.Message>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <ButtonGroup>
+                <styles.RoleButton>Customer</styles.RoleButton>
+                <styles.RoleButton disabled>Seller</styles.RoleButton>
+              </ButtonGroup>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <Formik
+                initialValues={{
+                  name: "",
+                  email: "",
+                  password: "",
+                }}
+                validationSchema={validationSchema}
+                onSubmit={async (values) => {
+                  const data = {
+                    name: values.name,
+                    email: values.email,
+                    password: values.password,
+                  };
+                  await dispatch(AuthActions.signup(data));
+                  history.push("/login");
+                }}
+              >
+                {({
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  isSubmitting,
+                  touched,
+                  values,
+                  errors,
+                }) => (
+                  <Form className="w-50" onSubmit={handleSubmit}>
+                    <FormGroup>
+                      <Input
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.name}
+                        type="text"
+                        className="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="Name"
+                        required
+                        autoFocus
+                      />
+                      <h6 className="text-danger pt-2">
+                        {errors.name && touched.name ? errors.name : null}
+                      </h6>
+                    </FormGroup>
+                    <FormGroup>
+                      <Input
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.email}
+                        type="email"
+                        className="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="Email"
+                        required
+                      />
+                      <h6 className="text-danger pt-2">
+                        {errors.email && touched.email ? errors.email : null}
+                      </h6>
+                    </FormGroup>
+                    <FormGroup>
+                      <Input
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.password}
+                        type="password"
+                        className="form-control"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                        required
+                      />
+                      <h6 className="text-danger pt-2">
+                        {errors.password && touched.password
+                          ? errors.password
+                          : null}
+                      </h6>
+                    </FormGroup>
+                    <h6 className="text-warning text-right">&nbsp;</h6>
+                    <styles.Button block type="submit" disabled={isSubmitting}>
+                      SIGNUP
+                    </styles.Button>
+                  </Form>
+                )}
+              </Formik>
+            </Col>
+            <Col
+              xs={12}
+              className="m-3 d-flex align-items-center justify-content-center"
+            >
+              <styles.Message>Already have a Beli Tuku account?</styles.Message>
+              &nbsp;
+              <Link to="/login">
+                <styles.Message className="text-warning text-right">
+                  Login
+                </styles.Message>
+              </Link>
+            </Col>
+          </Row>
+        )}
       </styles.Container>
     </>
   );

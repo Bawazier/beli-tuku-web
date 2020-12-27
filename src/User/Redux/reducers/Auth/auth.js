@@ -83,7 +83,7 @@ export default (state = initialState, action) => {
         ...state,
         isForgotPassLoading: false,
         isForgotPassError: true,
-        alertMsg: action.payload.data.message,
+        alertMsg: action.payload,
       };
     }
     case "FORGOT_PASS_FULFILLED": {
@@ -104,7 +104,7 @@ export default (state = initialState, action) => {
         ...state,
         isEmailLoading: false,
         isEmailError: true,
-        alertMsg: action.payload.data.message,
+        alertMsg: action.payload,
       };
     }
     case "VALIDATE_FORGOT_PASS_FULFILLED": {
