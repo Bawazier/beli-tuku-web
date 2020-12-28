@@ -28,7 +28,17 @@ const Home = () => {
   const listNewProducts = useSelector((state) => state.listNewProducts);
   const listPopularProducts = useSelector((state) => state.listPopularProducts);
   const listCategories = useSelector((state) => state.listCategories);
-  const [ad, setAd] = useState([]);
+  const [ad, setAd] = useState([
+    {
+      src: require('../Assets/Images/carousel250.png')
+    },
+    {
+      src: require('../Assets/Images/carousel250.png')
+    },
+    {
+      src: require('../Assets/Images/carousel250.png')
+    }
+  ]);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -42,18 +52,18 @@ const Home = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(() => {
-    if(!listPopularProducts.isLoading && !listPopularProducts.isError){
-      listPopularProducts.data.map((items, index) => {
-            if (index < 4) {
-              console.log(items.id);
-              console.log(items.ProductImages[0].picture);
-              console.log(ad);
-              setAd([{ src: REACT_APP_API_URL + '/' + items.ProductImages[0].picture }]);
-            }
-      });
-    }
-  }, [listPopularProducts.isError, listPopularProducts.isLoading, listPopularProducts]);
+  // useEffect(() => {
+  //   if(!listPopularProducts.isLoading && !listPopularProducts.isError){
+  //     listPopularProducts.data.map((items, index) => {
+  //           if (index < 4) {
+  //             console.log(items.id);
+  //             console.log(items.ProductImages[0].picture);
+  //             console.log(ad);
+  //             setAd([{ src: REACT_APP_API_URL + '/' + items.ProductImages[0].picture }]);
+  //           }
+  //     });
+  //   }
+  // }, [listPopularProducts.isError, listPopularProducts.isLoading, listPopularProducts]);
 
   const detailProduct = (id_product) => {
     history.push(`/product/${id_product}`);
@@ -105,18 +115,9 @@ const Home = () => {
             />
           </Col>
           <Col xs={9}>
-            <styles.Carousel>
-              {/* <style>
-                {`.custom-tag > img {
-              max-width: 100%;
-              height: 300px;
-            }`}
-              </style>
-              <UncontrolledCarousel
-                items={ad}
-                className="custom-tag"
-              /> */}
-            </styles.Carousel>
+            <UncontrolledCarousel
+              items={ad}
+            />
           </Col>
         </styles.ContainerRow>
         <styles.SectionRow>
