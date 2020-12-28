@@ -11,9 +11,11 @@ import {
   CardTitle,
   CardText,
   CardBody,
+  Spinner,
   Modal,
   ModalBody,
   ModalHeader,
+  ModalFooter,
 } from "reactstrap";
 import numeral from "numeral";
 
@@ -41,6 +43,7 @@ const Checkout = () => {
     isCheckoutLoading,
     totalAmount,
   } = useSelector((state) => state.cart);
+  const orders = useSelector((state) => state.order);
   const address = useSelector(
     (state) => state.address
   );
@@ -69,16 +72,15 @@ const Checkout = () => {
   const discardCheckout = async () => {
     setOrder(false);
     await dispatch(transactionActions.discardCheckoutCart(auth.token));
-      dispatch(transactionActions.returnDataCart());
-    dispatch(transactionActions.listCart(auth.token));
+    await dispatch(transactionActions.returnDataCart());
     history.goBack();
   };
 
   const submitOrder = async () => {
-    if (data.Credit.saldo >= totalAmount + 20000) {
+    if (data.Credit.saldo >= quantityCounter.exTotalAmount + 20000) {
       await dispatch(transactionActions.orderByCredit(auth.token));
+      setSuccess(!success);
       dispatch(transactionActions.clearDataCart());
-      history.push("/");
     } else {
       setOrder(!order);
     }
@@ -87,7 +89,6 @@ const Checkout = () => {
   const topup = async (id) => {
     await dispatch(transactionActions.topupCredit(auth.token, id));
     dispatch(accountActions.getAccount(auth.token));
-    setSuccess(!success);
     toggleTopupOpen();
   };
 
@@ -192,205 +193,235 @@ const Checkout = () => {
           </Card>
         </ModalBody>
       </Modal>
-      <styles.Container>
-        <Row>
-          <Col xs={8}>
-            <styles.SectionTitle>
-              <h2>Checkout</h2>
-            </styles.SectionTitle>
-            <styles.Section>
-              <h5>Shipping Address</h5>
-              {!address.isLoading &&
-                !address.isListError &&
-                address.dataList.map((item) => {
-                  if (item.isPrimary) {
-                    return (
+      <Modal isOpen={order} onClick={() => setOrder(!order)}>
+        <ModalBody className="text-danger font-weight-bold text-center h5">
+          Sorry you can't make a transaction because your balance is insufficient, please do a top up first
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={() => setOrder(!order)}>
+            CLOSE
+          </Button>
+        </ModalFooter>
+      </Modal>
+        {orders.isLoading ? (
+          <styles.Spinner
+            style={{ top: '50%' }}
+            type="grow"
+          />
+        ) : success ? (
+          <Modal isOpen={success} toggle={() => setSuccess(!success)}>
+            <ModalBody className="text-success font-weight-bold text-center h6">
+              Your order will be delivered soon.
+              Thank you for choosing our app!
+          </ModalBody>
+              <ModalFooter>
+              <Button color="success" onClick={() => history.push("/")}>
+                Continue shopping
+            </Button>
+              </ModalFooter>
+            </Modal>
+        ) : (
+            <styles.Container>
+              <Row>
+                <Col xs={8}>
+                  <styles.SectionTitle>
+                    <h2>Checkout</h2>
+                  </styles.SectionTitle>
+                  <styles.Section>
+                    <h5>Shipping Address</h5>
+                    {!address.isLoading &&
+                      !address.isListError &&
+                      address.dataList.map((item) => {
+                        if (item.isPrimary) {
+                          return (
+                            <Card body>
+                              <CardTitle tag="h5">{item.name}</CardTitle>
+                              <CardText>
+                                {item.address}, {item.region}, {item.postalCode}
+                              </CardText>
+                              <Button
+                                color="warning"
+                                className="font-weight-bold text-white"
+                                onClick={toggle}
+                              >
+                                Choose another address
+                        </Button>
+                            </Card>
+                          );
+                        }
+                      })}
+                    {!address.isLoading && address.isListError && (
                       <Card body>
-                        <CardTitle tag="h5">{item.name}</CardTitle>
-                        <CardText>
-                          {item.address}, {item.region}, {item.postalCode}
-                        </CardText>
                         <Button
-                          color="warning"
+                          color="danger"
                           className="font-weight-bold text-white"
                           onClick={toggle}
                         >
                           Choose another address
-                        </Button>
-                      </Card>
-                    );
-                  }
-                })}
-              {!address.isLoading && address.isListError && (
-                <Card body>
-                  <Button
-                    color="danger"
-                    className="font-weight-bold text-white"
-                    onClick={toggle}
-                  >
-                    Choose another address
                   </Button>
-                </Card>
-              )}
-            </styles.Section>
-            <styles.Section>
-              {!isCheckoutLoading &&
-                !isCheckoutError &&
-                dataListCartOut.map((item, index) => (
-                  <Card body className="mb-2">
-                    <Row className="align-items-center justify-content-between">
-                      <Col xs={8}>
-                        <Row>
-                          <Col xs={4} className="pr-0 mr-0">
-                            <styles.Img
-                              src={
-                                item.DetailProduct.ProductImage.picture
-                                  ? REACT_APP_API_URL +
-                                    "/" +
-                                    item.DetailProduct.ProductImage.picture
-                                  : require("../Assets/Images/PrimaryImage.png")
-                              }
-                              alt="Card image cap"
-                            />
-                          </Col>
-                          <Col xs={8}>
-                            <h5>{item.DetailProduct.Product.name || ""}</h5>
-                          </Col>
-                        </Row>
-                      </Col>
-                      <Col xs={4}>
-                        <h6 className="text-right font-weight-bold">
-                          Rp.
+                      </Card>
+                    )}
+                  </styles.Section>
+                  <styles.Section>
+                    {!isCheckoutLoading &&
+                      !isCheckoutError &&
+                      dataListCartOut.map((item, index) => (
+                        <Card body className="mb-2">
+                          <Row className="align-items-center justify-content-between">
+                            <Col xs={8}>
+                              <Row>
+                                <Col xs={4} className="pr-0 mr-0">
+                                  <styles.Img
+                                    src={
+                                      item.DetailProduct.ProductImage.picture
+                                        ? REACT_APP_API_URL +
+                                        "/" +
+                                        item.DetailProduct.ProductImage.picture
+                                        : require("../Assets/Images/PrimaryImage.png")
+                                    }
+                                    alt="Card image cap"
+                                  />
+                                </Col>
+                                <Col xs={8}>
+                                  <h5>{item.DetailProduct.Product.name || ""}</h5>
+                                </Col>
+                              </Row>
+                            </Col>
+                            <Col xs={4}>
+                              <h6 className="text-right font-weight-bold">
+                                Rp.
                           {numeral(item.totalPrice * item.quantity)
+                                  .format(0, 0)
+                                  .toString()
+                                  .replace(",", ".")}
+                          ,-
+                        </h6>
+                            </Col>
+                          </Row>
+                        </Card>
+                      ))}
+                  </styles.Section>
+                </Col>
+                <Col xs={4}>
+                  <styles.SectionTitle>
+                    <h2>Summary</h2>
+                  </styles.SectionTitle>
+                  <styles.Section>
+                    <Row className="align-items-center justify-content-between">
+                      <Col>
+                        <h6 className="text-muted">SUBTOTAL</h6>
+                      </Col>
+                      <Col>
+                        <h6>
+                          Rp.
+                    {numeral(quantityCounter.exTotalAmount)
                             .format(0, 0)
                             .toString()
                             .replace(",", ".")}
-                          ,-
-                        </h6>
-                      </Col>
-                    </Row>
-                  </Card>
-                ))}
-            </styles.Section>
-          </Col>
-          <Col xs={4}>
-            <styles.SectionTitle>
-              <h2>Summary</h2>
-            </styles.SectionTitle>
-            <styles.Section>
-              <Row className="align-items-center justify-content-between">
-                <Col>
-                  <h6 className="text-muted">SUBTOTAL</h6>
-                </Col>
-                <Col>
-                  <h6>
-                    Rp.
-                    {numeral(totalAmount)
-                      .format(0, 0)
-                      .toString()
-                      .replace(",", ".")}
                     ,-
                   </h6>
-                </Col>
-              </Row>
-              <Row className="align-items-center justify-content-between">
-                <Col>
-                  <h6 className="text-muted">SHIPPING EST</h6>
-                </Col>
-                <Col>
-                  <h6>
-                    Rp.
+                      </Col>
+                    </Row>
+                    <Row className="align-items-center justify-content-between">
+                      <Col>
+                        <h6 className="text-muted">SHIPPING EST</h6>
+                      </Col>
+                      <Col>
+                        <h6>
+                          Rp.
                     {numeral(20000).format(0, 0).toString().replace(",", ".")}
                     ,-
                   </h6>
-                </Col>
-              </Row>
-            </styles.Section>
-            <styles.Section>
-              <Row className="align-items-center justify-content-between">
-                <Col>
-                  <h6 className="text-muted">TOTAL PRICE</h6>
-                </Col>
-                <Col>
-                  <h6>
-                    Rp.
-                    {numeral(quantityCounter.totalAmount + 20000)
-                      .format(0, 0)
-                      .toString()
-                      .replace(",", ".")}
+                      </Col>
+                    </Row>
+                  </styles.Section>
+                  <styles.Section>
+                    <Row className="align-items-center justify-content-between">
+                      <Col>
+                        <h6 className="text-muted">TOTAL PRICE</h6>
+                      </Col>
+                      <Col>
+                        <h6>
+                          Rp.
+                    {numeral(quantityCounter.exTotalAmount + 20000)
+                            .format(0, 0)
+                            .toString()
+                            .replace(",", ".")}
                     ,-
                   </h6>
-                </Col>
-              </Row>
-            </styles.Section>
-            <styles.Section>
-              <Row>
-                <Col>
-                  <Button disabled>SELECT PAYMENT</Button>
-                </Col>
-              </Row>
-            </styles.Section>
-            <styles.SectionTitle>
-              <h5>Credit</h5>
-              <Row className="align-items-center justify-content-between">
-                <Col>
-                  <h6 className="text-muted">TOTAL CREDIT</h6>
-                </Col>
-                <Col>
-                  <h6>
-                    Rp.
+                      </Col>
+                    </Row>
+                  </styles.Section>
+                  <styles.Section>
+                    <Row>
+                      <Col>
+                        <Button disabled>SELECT PAYMENT</Button>
+                      </Col>
+                    </Row>
+                  </styles.Section>
+                  <styles.SectionTitle>
+                    <h5>Credit</h5>
+                    <Row className="align-items-center justify-content-between">
+                      <Col>
+                        <h6 className="text-muted">TOTAL CREDIT</h6>
+                      </Col>
+                      <Col>
+                        <h6>
+                          Rp.
                     {numeral((data.Credit && data.Credit.saldo) || 0)
-                      .format(0, 0)
-                      .toString()
-                      .replace(",", ".")}
+                            .format(0, 0)
+                            .toString()
+                            .replace(",", ".")}
                     ,-
                   </h6>
+                      </Col>
+                    </Row>
+                  </styles.SectionTitle>
+                  {!isCheckoutLoading && !isCheckoutError && (
+                    <styles.Section>
+                      <Row>
+                        <Col>
+                          <Button
+                            block
+                            outline
+                            color="warning"
+                            className="font-weight-bold"
+                            onClick={toggleTopupOpen}
+                          >
+                            TOPUP
+                    </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            block
+                            outline
+                            color="warning"
+                            onClick={discardCheckout}
+                            className="font-weight-bold"
+                          >
+                            DISCARD
+                    </Button>
+                        </Col>
+                      </Row>
+                      <Row className="mt-2">
+                        <Col xs={12}>
+                          <Button
+                            block
+                            color="warning"
+                            className="font-weight-bold text-white"
+                            onClick={submitOrder}
+                          >
+                            SUBMIT ORDER
+                    </Button>
+                        </Col>
+                      </Row>
+                    </styles.Section>
+                  )}
                 </Col>
               </Row>
-            </styles.SectionTitle>
-            {!isCheckoutLoading && !isCheckoutError && (
-              <styles.Section>
-                <Row>
-                  <Col>
-                    <Button
-                      block
-                      outline
-                      color="warning"
-                      className="font-weight-bold"
-                      onClick={toggleTopupOpen}
-                    >
-                      TOPUP
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button
-                      block
-                      outline
-                      color="warning"
-                      onClick={discardCheckout}
-                      className="font-weight-bold"
-                    >
-                      DISCARD
-                    </Button>
-                  </Col>
-                </Row>
-                <Row className="mt-2">
-                  <Col xs={12}>
-                    <Button
-                      block
-                      color="warning"
-                      className="font-weight-bold text-white"
-                      onClick={submitOrder}
-                    >
-                      SUBMIT ORDER
-                    </Button>
-                  </Col>
-                </Row>
-              </styles.Section>
-            )}
-          </Col>
-        </Row>
       </styles.Container>
+        )}
+        
     </>
   );
 };
@@ -430,6 +461,18 @@ const styles = {
     border: 1px dashed black;
     color: gray;
     font-size: 24px;
+  `,
+
+  Spinner: styled(Spinner)`
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 2;
+    width: 5rem;
+    height: 5rem;
+    color: #1bc29b;
   `,
 };
 

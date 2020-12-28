@@ -63,17 +63,15 @@ const BodyTable = (props) => {
   const price = props.totalPrice * quantity;
 
   useEffect(() => {
-    if (quantityCounter.id[quantityCounter.id.length - 1] !== props.idCart) {
-      dispatch(
-        transactionActions.dataCart(props.idCart, {
-          id: props.idCart,
-          content: {
-            quantity: quantity || 1,
-            price: price,
-          },
-        })
-      );
-    }
+    dispatch(
+      transactionActions.dataCart(props.idCart, {
+        id: props.idCart,
+        content: {
+          quantity: quantity || 1,
+          price: price,
+        },
+      })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataListCart]);
 

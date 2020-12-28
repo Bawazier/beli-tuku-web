@@ -2,7 +2,12 @@ import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled, {createGlobalStyle} from "styled-components";
-import { Container, Row, Col, Button } from "reactstrap";
+import {
+  Container, Row, Col, Button,
+  Spinner,
+  Modal,
+  ModalFooter,
+  ModalBody, } from "reactstrap";
 import numeral from "numeral";
 
 //Components
@@ -17,6 +22,8 @@ const Cart = () => {
     dataListCart,
     isListCartError,
     isListCartLoading,
+    isCheckoutLoading,
+    isCheckoutError,
   } = useSelector((state) => state.cart);
   const quantityCounter = useSelector((state) => state.quantityCounter);
   const auth = useSelector((state) => state.auth);
@@ -29,16 +36,16 @@ const Cart = () => {
   }, []);
 
   const checkout = async () => {
-      await dataListCart.map(async (item) => {
+    await dispatch(transactionActions.parsingDataCart());
+    await dataListCart.map(async (item) => {
         dispatch(
           transactionActions.checkoutCart(
             auth.token,
             item.id,
-            item.quantity
+            quantityCounter.data[item.id].content.quantity
           )
         );
       });
-    dispatch(transactionActions.parsingDataCart());
     history.push("/checkout");
     dispatch(transactionActions.listCart(auth.token));
   };
@@ -47,6 +54,12 @@ const Cart = () => {
       <Navigation />
       <styles.GlobalStyle />
       <styles.Container>
+        {isCheckoutLoading && !isCheckoutError && (
+          <styles.Spinner
+            style={{ top: '50%' }}
+            type="grow"
+          />
+        )}
         <Row>
           <Col xs={8}>
             <styles.SectionTitle>
@@ -147,6 +160,18 @@ const styles = {
 
   SectionTitle: styled.div`
     margin: 20px 0;
+  `,
+
+  Spinner: styled(Spinner)`
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 2;
+    width: 5rem;
+    height: 5rem;
+    color: #1bc29b;
   `,
 };
 
