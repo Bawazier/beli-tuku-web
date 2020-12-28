@@ -1,60 +1,65 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import {connect} from "react-redux"
 
 import Home from "./Pages/Home";
-import Search from "./Pages/Search";
-import Category from "./Pages/Category";
-import Login from "./Pages/Login";
-import Register from "./Pages/Signup";
+import DetailProduct from "./Pages/DetailProduct";
+import Catalog from "./Pages/Catalog";
+import Cart from "./Pages/Cart";
+import Checkout from "./Pages/Checkout";
 import Profile from "./Pages/Profile";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
+import ResetPass from "./Pages/ResetPass";
+import ConfirmPass from "./Pages/ConfirmPass";
 
-import PrivateRoute from "./Components/PrivateRoute/"
-
-import authAction from "./Redux/actions/auth"
+import PrivateRoute from "./Components/PrivateRoute";
 
 class App extends React.Component {
-  componentDidMount(){
-    if(localStorage.getItem("token")){
-      this.props.token(localStorage.getItem("token"))
-    }
-  }
   render() {
     return (
       <BrowserRouter>
         <Switch>
-          <PrivateRoute exact path="/profile/account">
-            <Profile />
-          </PrivateRoute>
+          <Route path="/login" render={(props) => <Login {...props} />} exact />
+          <Route
+            path="/signup"
+            render={(props) => <Signup {...props} />}
+            exact
+          />
+          <Route
+            path="/reset"
+            render={(props) => <ResetPass {...props} />}
+            exact
+          />
+          <Route
+            path="/reset/confirm"
+            render={(props) => <ConfirmPass {...props} />}
+            exact
+          />
           <Route path="/" render={(props) => <Home {...props} />} exact />
           <Route
-            path="/auth/login"
-            render={(props) => <Login {...props} />}
+            path="/product/:id"
+            render={(props) => <DetailProduct {...props} />}
             exact
           />
           <Route
-            path="/auth/signup"
-            render={(props) => <Register {...props} />}
+            path="/catalog"
+            render={(props) => <Catalog {...props} />}
             exact
           />
-          <Route
-            path="/products/search"
-            render={(props) => <Search {...props} />}
-            exact
-          />
-          <Route
-            path="/products/category"
-            render={(props) => <Category {...props} />}
-            exact
-          />
+
+          <PrivateRoute exact path="/profile">
+            <Profile />
+          </PrivateRoute>
+          <PrivateRoute exact path="/bag">
+            <Cart />
+          </PrivateRoute>
+          <PrivateRoute exact path="/checkout">
+            <Checkout />
+          </PrivateRoute>
         </Switch>
       </BrowserRouter>
     );
   }
 }
 
-const mapDispatchToProps = {
-  token: authAction.setToken,
-};
-
-export default connect(null, mapDispatchToProps)(App);
+export default App;

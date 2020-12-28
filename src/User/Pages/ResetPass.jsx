@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
@@ -9,7 +9,6 @@ import {
   Row,
   Col,
   Button,
-  ButtonGroup,
   Form,
   Input,
   FormGroup,
@@ -22,18 +21,16 @@ import {
 //Actions
 import AuthActions from "../Redux/actions/auth";
 
-const Signup = () => {
+const ResetPass = () => {
   const auth = useSelector((state) => state.auth);
   const [error, setError] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
 
   const validationSchema = Yup.object({
-    name: Yup.string().max(80, "name cannot be too long").required(),
-    email: Yup.string().email("Input must be Email").required(),
-    password: Yup.string()
-      .min(8, "Password cannot be less than 8")
-      .required("Password is Required"),
+    email: Yup.string()
+      .email('Input must be Email')
+      .required('Email is Required'),
   });
 
   useEffect(() => {
@@ -42,7 +39,7 @@ const Signup = () => {
   }, []);
 
   useEffect(() => {
-    if (!auth.isSignupLoading && auth.isSignupError) {
+    if (!auth.isEmailLoading && auth.isEmailError) {
       setError(!error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,7 +55,8 @@ const Signup = () => {
         {error ? (
           <Modal isOpen={error} toggle={() => setError(!error)}>
             <ModalBody className="text-danger text-center h5">
-              Email has been used, please try again
+              Email has not been registered, make sure the email you entered is
+              correct
             </ModalBody>
             <ModalFooter>
               <Button color="secondary" onClick={() => setError(!error)}>
@@ -66,7 +64,7 @@ const Signup = () => {
               </Button>
             </ModalFooter>
           </Modal>
-        ) : auth.isSignupLoading ? (
+        ) : auth.isEmailLoading ? (
           <Spinner
             style={{ width: "5rem", height: "5rem", color: "#1bc29b" }}
             type="grow"
@@ -88,16 +86,7 @@ const Signup = () => {
               xs={12}
               className="m-3 d-flex align-items-center justify-content-center"
             >
-              <styles.Message>Please sign up with your account</styles.Message>
-            </Col>
-            <Col
-              xs={12}
-              className="m-3 d-flex align-items-center justify-content-center"
-            >
-              <ButtonGroup>
-                <styles.RoleButton>Customer</styles.RoleButton>
-                <styles.RoleButton disabled>Seller</styles.RoleButton>
-              </ButtonGroup>
+              <styles.Message>Reset password</styles.Message>
             </Col>
             <Col
               xs={12}
@@ -105,19 +94,15 @@ const Signup = () => {
             >
               <Formik
                 initialValues={{
-                  name: "",
                   email: "",
-                  password: "",
                 }}
                 validationSchema={validationSchema}
                 onSubmit={async (values) => {
                   const data = {
-                    name: values.name,
                     email: values.email,
-                    password: values.password,
                   };
-                  await dispatch(AuthActions.signup(data));
-                  history.push("/login");
+                  await dispatch(AuthActions.validateForgotPass(data));
+                  history.push("/reset/confirm");
                 }}
               >
                 {({
@@ -134,23 +119,6 @@ const Signup = () => {
                       <Input
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        value={values.name}
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        name="name"
-                        placeholder="Name"
-                        required
-                        autoFocus
-                      />
-                      <h6 className="text-danger pt-2">
-                        {errors.name && touched.name ? errors.name : null}
-                      </h6>
-                    </FormGroup>
-                    <FormGroup>
-                      <Input
-                        onChange={handleChange}
-                        onBlur={handleBlur}
                         value={values.email}
                         type="email"
                         className="form-control"
@@ -158,32 +126,14 @@ const Signup = () => {
                         name="email"
                         placeholder="Email"
                         required
+                        autoFocus
                       />
                       <h6 className="text-danger pt-2">
                         {errors.email && touched.email ? errors.email : null}
                       </h6>
                     </FormGroup>
-                    <FormGroup>
-                      <Input
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.password}
-                        type="password"
-                        className="form-control"
-                        id="password"
-                        name="password"
-                        placeholder="Password"
-                        required
-                      />
-                      <h6 className="text-danger pt-2">
-                        {errors.password && touched.password
-                          ? errors.password
-                          : null}
-                      </h6>
-                    </FormGroup>
-                    <h6 className="text-warning text-right">&nbsp;</h6>
                     <styles.Button block type="submit" disabled={isSubmitting}>
-                      SIGNUP
+                      SEND
                     </styles.Button>
                   </Form>
                 )}
@@ -193,11 +143,11 @@ const Signup = () => {
               xs={12}
               className="m-3 d-flex align-items-center justify-content-center"
             >
-              <styles.Message>Already have a Beli Tuku account?</styles.Message>
+              <styles.Message>Don't have a Shoppe.id account?</styles.Message>
               &nbsp;
-              <Link to="/login">
+              <Link to="/signup">
                 <styles.Message className="text-warning text-right">
-                  Login
+                  Register
                 </styles.Message>
               </Link>
             </Col>
@@ -243,4 +193,4 @@ const styles = {
   `,
 };
 
-export default Signup;
+export default ResetPass;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
@@ -9,7 +9,6 @@ import {
   Row,
   Col,
   Button,
-  ButtonGroup,
   Form,
   Input,
   FormGroup,
@@ -22,27 +21,23 @@ import {
 //Actions
 import AuthActions from "../Redux/actions/auth";
 
-const Signup = () => {
+const ConfirmPass = () => {
   const auth = useSelector((state) => state.auth);
   const [error, setError] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
 
   const validationSchema = Yup.object({
-    name: Yup.string().max(80, "name cannot be too long").required(),
-    email: Yup.string().email("Input must be Email").required(),
-    password: Yup.string()
-      .min(8, "Password cannot be less than 8")
-      .required("Password is Required"),
+    newPassword: Yup.string()
+      .min(8, "New Password cannot be less than 8")
+      .required("New Password is Required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("newPassword"), null], "Passwords not match")
+      .required("Password confirmation is required"),
   });
 
   useEffect(() => {
-    dispatch(AuthActions.logout());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!auth.isSignupLoading && auth.isSignupError) {
+    if (!auth.isForgotPassLoading && auth.isForgotPassError) {
       setError(!error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,7 +53,7 @@ const Signup = () => {
         {error ? (
           <Modal isOpen={error} toggle={() => setError(!error)}>
             <ModalBody className="text-danger text-center h5">
-              Email has been used, please try again
+              Password reset failed
             </ModalBody>
             <ModalFooter>
               <Button color="secondary" onClick={() => setError(!error)}>
@@ -66,7 +61,7 @@ const Signup = () => {
               </Button>
             </ModalFooter>
           </Modal>
-        ) : auth.isSignupLoading ? (
+        ) : auth.isForgotPassLoading ? (
           <Spinner
             style={{ width: "5rem", height: "5rem", color: "#1bc29b" }}
             type="grow"
@@ -88,16 +83,15 @@ const Signup = () => {
               xs={12}
               className="m-3 d-flex align-items-center justify-content-center"
             >
-              <styles.Message>Please sign up with your account</styles.Message>
+              <styles.Message>Reset password</styles.Message>
             </Col>
             <Col
               xs={12}
               className="m-3 d-flex align-items-center justify-content-center"
             >
-              <ButtonGroup>
-                <styles.RoleButton>Customer</styles.RoleButton>
-                <styles.RoleButton disabled>Seller</styles.RoleButton>
-              </ButtonGroup>
+              <styles.Message className="text-danger">
+                You need to change your password to activate your account
+              </styles.Message>
             </Col>
             <Col
               xs={12}
@@ -105,18 +99,19 @@ const Signup = () => {
             >
               <Formik
                 initialValues={{
-                  name: "",
-                  email: "",
-                  password: "",
+                  newPassword: "",
+                  confirmPassword: "",
                 }}
                 validationSchema={validationSchema}
                 onSubmit={async (values) => {
                   const data = {
-                    name: values.name,
-                    email: values.email,
-                    password: values.password,
+                    newPassword: values.newPassword,
+                    confirmNewPassword: values.confirmPassword,
                   };
-                  await dispatch(AuthActions.signup(data));
+                  console.log(auth.emailValidData.id);
+                  await dispatch(
+                    AuthActions.forgotPass(auth.emailValidData.id, data)
+                  );
                   history.push("/login");
                 }}
               >
@@ -134,72 +129,44 @@ const Signup = () => {
                       <Input
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        value={values.name}
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        name="name"
-                        placeholder="Name"
-                        required
-                        autoFocus
-                      />
-                      <h6 className="text-danger pt-2">
-                        {errors.name && touched.name ? errors.name : null}
-                      </h6>
-                    </FormGroup>
-                    <FormGroup>
-                      <Input
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.email}
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        name="email"
-                        placeholder="Email"
-                        required
-                      />
-                      <h6 className="text-danger pt-2">
-                        {errors.email && touched.email ? errors.email : null}
-                      </h6>
-                    </FormGroup>
-                    <FormGroup>
-                      <Input
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.password}
+                        value={values.newPassword}
                         type="password"
                         className="form-control"
-                        id="password"
-                        name="password"
-                        placeholder="Password"
+                        id="newPassword"
+                        name="newPassword"
+                        placeholder="New Password"
                         required
                       />
                       <h6 className="text-danger pt-2">
-                        {errors.password && touched.password
-                          ? errors.password
+                        {errors.newPassword && touched.newPassword
+                          ? errors.newPassword
                           : null}
                       </h6>
                     </FormGroup>
-                    <h6 className="text-warning text-right">&nbsp;</h6>
+                    <FormGroup>
+                      <Input
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.confirmPassword}
+                        type="password"
+                        className="form-control"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Confirmation New Password"
+                        required
+                      />
+                      <h6 className="text-danger pt-2">
+                        {errors.confirmPassword && touched.confirmPassword
+                          ? errors.confirmPassword
+                          : null}
+                      </h6>
+                    </FormGroup>
                     <styles.Button block type="submit" disabled={isSubmitting}>
-                      SIGNUP
+                      RESET
                     </styles.Button>
                   </Form>
                 )}
               </Formik>
-            </Col>
-            <Col
-              xs={12}
-              className="m-3 d-flex align-items-center justify-content-center"
-            >
-              <styles.Message>Already have a Beli Tuku account?</styles.Message>
-              &nbsp;
-              <Link to="/login">
-                <styles.Message className="text-warning text-right">
-                  Login
-                </styles.Message>
-              </Link>
             </Col>
           </Row>
         )}
@@ -243,4 +210,4 @@ const styles = {
   `,
 };
 
-export default Signup;
+export default ConfirmPass;

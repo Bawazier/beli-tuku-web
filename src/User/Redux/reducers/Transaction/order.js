@@ -1,51 +1,45 @@
 const initialState = {
-  data: [],
+  dataList: [],
+  dataGet: {},
+  pageInfo: {},
   isLoading: false,
   alertMsg: '',
 
+  isPostError: false,
   isGetError: false,
-  isUpdateError: false,
-  isChangePassError: false,
-  isChangePassLoading: false,
+  isListtError: false,
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case 'CHANGE_PASSWORD_PENDING': {
-      return {
-        ...state,
-        isChangePassLoading: true,
-      };
-    }
-    case 'CHANGE_PASSWORD_REJECTED': {
-      return {
-        ...state,
-        isChangePassLoading: false,
-        isChangePassError: true,
-        alertMsg: action.payload,
-      };
-    }
-    case 'CHANGE_PASSWORD_FULFILLED': {
-      return {
-        ...state,
-        isChangePassLoading: false,
-        isChangePassError: false,
-      };
-    }
-    case 'CHANGE_PASSWORD_TRY': {
-      return {
-        ...state,
-        isChangePassLoading: false,
-        isChangePassError: false,
-      };
-    }
-    case 'GET_ACCOUNT_PENDING': {
+    case 'POST_ORDER_PENDING': {
       return {
         ...state,
         isLoading: true,
       };
     }
-    case 'GET_ACCOUNT_REJECTED': {
+    case 'POST_ORDER_REJECTED': {
+      return {
+        ...state,
+        isLoading: false,
+        isPostError: true,
+        alertMsg: action.payload,
+      };
+    }
+    case 'POST_ORDER_FULFILLED': {
+      return {
+        ...state,
+        isLoading: false,
+        isPostError: false,
+      };
+    }
+    case 'GET_ORDER_PENDING': {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    }
+    case 'GET_ORDER_REJECTED': {
       return {
         ...state,
         isLoading: false,
@@ -53,33 +47,35 @@ export default (state = initialState, action) => {
         alertMsg: action.payload,
       };
     }
-    case 'GET_ACCOUNT_FULFILLED': {
+    case 'GET_ORDER_FULFILLED': {
       return {
         ...state,
         isLoading: false,
         isGetError: false,
-        data: action.payload.data.results,
+        dataGet: action.payload.data.results,
       };
     }
-    case 'UPDATE_ACCOUNT_PENDING': {
+    case 'LIST_ORDER_PENDING': {
       return {
         ...state,
         isLoading: true,
       };
     }
-    case 'UPDATE_ACCOUNT_REJECTED': {
+    case 'LIST_ORDER_REJECTED': {
       return {
         ...state,
         isLoading: false,
-        isUpdateError: true,
+        isListtError: true,
         alertMsg: action.payload,
       };
     }
-    case 'UPDATE_ACCOUNT_FULFILLED': {
+    case 'LIST_ORDER_FULFILLED': {
       return {
         ...state,
         isLoading: false,
-        isUpdateError: false,
+        isListtError: false,
+        dataList: action.payload.data.results,
+        pageInfo: action.payload.data.pageInfo,
       };
     }
     case 'LOGOUT': {
