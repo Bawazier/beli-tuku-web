@@ -9,24 +9,17 @@ import numeral from "numeral";
 import transactionActions from '../Redux/actions/transaction';
 
 const TableCart = (props) => {
-  const { REACT_APP_API_URL } = process.env;
   const {
     dataListCart,
-    pageInfo,
     isListCartError,
     isListCartLoading,
   } = useSelector((state) => state.cart);
   const auth = useSelector((state) => state.auth);
-  const [data, setData] = useState([]);
-  const [totalAmount, setTotalAmount] = useState(0);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    setData(dataListCart)
-  }, [dataListCart]);
 
   const handleDelete = async (idCart) => {
     await dispatch(transactionActions.deleteCart(auth.token, idCart));
+    dispatch(transactionActions.deleteDataCart(idCart));
     dispatch(transactionActions.listCart(auth.token));
   };
 
@@ -43,66 +36,145 @@ const TableCart = (props) => {
       <tbody>
         {!isListCartLoading &&
           !isListCartError &&
-          dataListCart.map((item, index) => {
-            return (
-              <tr>
-                <styles.ItemColumn>
-                  <Row>
-                    <Col xs={4} className="pr-0 mr-0">
-                      <styles.Img
-                        src={
-                          item.DetailProduct.ProductImage.picture
-                            ? REACT_APP_API_URL +
-                              "/" +
-                              item.DetailProduct.ProductImage.picture
-                            : require("../Assets/Images/PrimaryImage.png")
-                        }
-                        alt="Card image cap"
-                      />
-                    </Col>
-                    <Col xs={8}>
-                      <h5>{item.DetailProduct.Product.name || ""}</h5>
-                    </Col>
-                  </Row>
-                </styles.ItemColumn>
-                <styles.QuantityColumn className="text-center">
-                  <Row className="align-items-center justify-content-center">
-                    <Col xs={4}>
-                      <Button color="danger" className="w-10 text-center">
-                        <FaMinus />
-                      </Button>
-                    </Col>
-                    <Col xs={3}>
-                      <h4 className="w-100 text-center">
-                        {item.quantity}
-                      </h4>
-                    </Col>
-                    <Col xs={4}>
-                      <Button color="danger" className="w-100 text-center">
-                        <FaPlus />
-                      </Button>
-                    </Col>
-                  </Row>
-                </styles.QuantityColumn>
-                <styles.PriceColumn>
-                  Rp.
-                  {numeral(item.totalPrice)
-                    .format(0, 0)
-                    .toString()
-                    .replace(",", ".")}
-                  ,-
-                </styles.PriceColumn>
-                <th className="text-center">
-                  <Button color="danger" onClick={() => handleDelete(item.id)}>
-                    <FaWindowClose />
-                  </Button>
-                </th>
-              </tr>
-            );})}
+          dataListCart.map((item, index) => (
+            <BodyTable
+              idCart={item.id}
+              picture={item.DetailProduct.ProductImage.picture}
+              name={item.DetailProduct.Product.name}
+              quantity={item.quantity}
+              totalPrice={item.totalPrice}
+              handleDelete={() => handleDelete(item.id)}
+              stock={item.DetailProduct.Product.stock}
+            />
+          ))}
       </tbody>
     </Table>
   );
 };
+
+const BodyTable = (props) => {
+  const { REACT_APP_API_URL } = process.env;
+  const { dataListCart } = useSelector(
+    (state) => state.cart
+  );
+  const quantityCounter = useSelector((state) => state.quantityCounter);
+  const [quantity, setQuantity] = useState(props.quantity);
+  const dispatch = useDispatch();
+  const price = props.totalPrice * quantity;
+
+  useEffect(() => {
+    if (quantityCounter.id[quantityCounter.id.length - 1] !== props.idCart) {
+      dispatch(
+        transactionActions.dataCart(props.idCart, {
+          id: props.idCart,
+          content: {
+            quantity: quantity || 1,
+            price: price,
+          },
+        })
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataListCart]);
+
+  const increment = async () => {
+    if (quantity < props.stock) {
+      await setQuantity(quantity + 1);
+      dispatch(
+        transactionActions.increment(props.idCart, {
+          content: {
+            quantity: quantityCounter.data[props.idCart].content.quantity + 1,
+            price:
+              props.totalPrice *
+              (quantityCounter.data[props.idCart].content.quantity + 1),
+          },
+        })
+      );
+    }
+  };
+
+  const decrement = async () => {
+    if (quantity > 1) {
+      await setQuantity(quantity - 1);
+      dispatch(
+        transactionActions.decrement(props.idCart, {
+          content: {
+            quantity: quantityCounter.data[props.idCart].content.quantity - 1,
+            price:
+              quantityCounter.data[props.idCart].content.price -
+              props.totalPrice,
+          },
+        })
+      );
+    }
+  };
+
+  return (
+    <tr>
+      <styles.ItemColumn>
+        <Row>
+          <Col xs={4} className="pr-0 mr-0">
+            <styles.Img
+              src={
+                props.picture
+                  ? REACT_APP_API_URL + "/" + props.picture
+                  : require("../Assets/Images/PrimaryImage.png")
+              }
+              alt="Card image cap"
+            />
+          </Col>
+          <Col xs={8}>
+            <h5>{props.name || ""}</h5>
+          </Col>
+        </Row>
+      </styles.ItemColumn>
+      <styles.QuantityColumn className="text-center">
+        <Row className="align-items-center justify-content-center">
+          <Col xs={4}>
+            <Button
+              color="danger"
+              className="w-10 text-center"
+              onClick={decrement}
+            >
+              <FaMinus />
+            </Button>
+          </Col>
+          <Col xs={3}>
+            <h4 className="w-100 text-center">
+              {quantityCounter.data &&
+                quantityCounter.data[props.idCart] &&
+                quantityCounter.data[props.idCart].content.quantity}
+            </h4>
+          </Col>
+          <Col xs={4}>
+            <Button
+              color="danger"
+              className="w-100 text-center"
+              onClick={increment}
+            >
+              <FaPlus />
+            </Button>
+          </Col>
+        </Row>
+      </styles.QuantityColumn>
+      <styles.PriceColumn>
+        Rp.
+        {numeral(quantityCounter.data &&
+            quantityCounter.data[props.idCart] &&
+            quantityCounter.data[props.idCart].content.price)
+          .format(0, 0)
+          .toString()
+          .replace(",", ".")}
+        ,-
+      </styles.PriceColumn>
+      <th className="text-center">
+        <Button color="danger" onClick={props.handleDelete}>
+          <FaWindowClose />
+        </Button>
+      </th>
+    </tr>
+  );
+}
 
 const styles = {
     Img: styled.img`

@@ -100,4 +100,16 @@ export default {
     type: 'REMOVE_DATA',
     id: id_cart,
   }),
+
+  parsingDataCart: () => ({
+    type: 'PARSING_DATA',
+  }),
+
+  returnDataCart: () => ({
+    type: 'RETURN_DATA',
+  }),
+
+  clearDataCart: () => ({
+    type: 'CLEAR_DATA',
+  })
 };

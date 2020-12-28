@@ -54,6 +54,7 @@ const Checkout = () => {
   const { data } = useSelector((state) => state.account);
   const [order, setOrder] = useState(false);
   const [success, setSuccess] = useState(false);
+  const quantityCounter = useSelector((state) => state.quantityCounter);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -68,6 +69,7 @@ const Checkout = () => {
   const discardCheckout = async () => {
     setOrder(false);
     await dispatch(transactionActions.discardCheckoutCart(auth.token));
+      dispatch(transactionActions.returnDataCart());
     dispatch(transactionActions.listCart(auth.token));
     history.goBack();
   };
@@ -75,6 +77,7 @@ const Checkout = () => {
   const submitOrder = async () => {
     if (data.Credit.saldo >= totalAmount + 20000) {
       await dispatch(transactionActions.orderByCredit(auth.token));
+      dispatch(transactionActions.clearDataCart());
       history.push("/");
     } else {
       setOrder(!order);
@@ -258,7 +261,7 @@ const Checkout = () => {
                       <Col xs={4}>
                         <h6 className="text-right font-weight-bold">
                           Rp.
-                          {numeral(item.totalPrice)
+                          {numeral(item.totalPrice * item.quantity)
                             .format(0, 0)
                             .toString()
                             .replace(",", ".")}
@@ -282,7 +285,10 @@ const Checkout = () => {
                 <Col>
                   <h6>
                     Rp.
-                    {numeral(2000000).format(0, 0).toString().replace(",", ".")}
+                    {numeral(totalAmount)
+                      .format(0, 0)
+                      .toString()
+                      .replace(",", ".")}
                     ,-
                   </h6>
                 </Col>
@@ -308,7 +314,10 @@ const Checkout = () => {
                 <Col>
                   <h6>
                     Rp.
-                    {numeral(220000).format(0, 0).toString().replace(",", ".")}
+                    {numeral(quantityCounter.totalAmount + 20000)
+                      .format(0, 0)
+                      .toString()
+                      .replace(",", ".")}
                     ,-
                   </h6>
                 </Col>

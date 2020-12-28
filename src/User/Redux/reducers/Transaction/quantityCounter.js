@@ -2,12 +2,17 @@ const initialState = {
   id: [],
   data: {},
   totalAmount: 0,
+
+  exId: [],
+  exData: {},
+  exTotalAmount: 0,
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'PUSH_DATA': {
       return {
+        ...state,
         id: [...new Set(state.id), action.id],
         data: {...state.data, [action.id]: action.payload},
         totalAmount: state.totalAmount + action.payload.content.price,
@@ -43,9 +48,40 @@ export default (state = initialState, action) => {
       const price = state.data[action.id].content.price;
       delete state.data[action.id];
       return {
+        ...state,
         id: filterId,
         data: state.data,
         totalAmount: state.totalAmount - price,
+      };
+    }
+    case 'PARSING_DATA': {
+      return {
+        ...state,
+        exId: [...state.exId, ...state.id],
+        exData: { ...state.exData, ...state.data },
+        exTotalAmount: state.exTotalAmount + state.totalAmount,
+        id: [],
+        data: {},
+        totalAmount: 0,
+      };
+    }
+    case 'RETURN_DATA': {
+      return {
+        ...state,
+        id: [...state.exId, ...state.id],
+        data: { ...state.exData, ...state.data },
+        totalAmount: state.exTotalAmount + state.totalAmount,
+        exId: [],
+        exData: {},
+        exTotalAmount: 0,
+      };
+    }
+    case 'CLEAR_DATA': {
+      return {
+        ...state,
+        exId: [],
+        exData: {},
+        exTotalAmount: 0,
       };
     }
     default: {

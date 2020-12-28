@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled, {createGlobalStyle} from "styled-components";
 import { Container, Row, Col, Button } from "reactstrap";
@@ -15,7 +15,6 @@ import transactionActions from '../Redux/actions/transaction';
 const Cart = () => {
   const {
     dataListCart,
-    pageInfo,
     isListCartError,
     isListCartLoading,
   } = useSelector((state) => state.cart);
@@ -23,7 +22,6 @@ const Cart = () => {
   const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const history = useHistory();
-  const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
     dispatch(transactionActions.listCart(auth.token));
@@ -31,9 +29,16 @@ const Cart = () => {
   }, []);
 
   const checkout = async () => {
-    await dataListCart.map(async (item) => {
-      dispatch(transactionActions.checkoutCart(auth.token, item.id, item.quantity));
-    });
+      await dataListCart.map(async (item) => {
+        dispatch(
+          transactionActions.checkoutCart(
+            auth.token,
+            item.id,
+            item.quantity
+          )
+        );
+      });
+    dispatch(transactionActions.parsingDataCart());
     history.push("/checkout");
     dispatch(transactionActions.listCart(auth.token));
   };
@@ -63,7 +68,10 @@ const Cart = () => {
                 <Col>
                   <h6>
                     Rp.
-                    {numeral(2000000).format(0, 0).toString().replace(",", ".")}
+                    {numeral(quantityCounter.totalAmount)
+                      .format(0, 0)
+                      .toString()
+                      .replace(",", ".")}
                     ,-
                   </h6>
                 </Col>
@@ -89,7 +97,10 @@ const Cart = () => {
                 <Col>
                   <h6>
                     Rp.
-                    {numeral(220000).format(0, 0).toString().replace(",", ".")}
+                    {numeral(quantityCounter.totalAmount + 20000)
+                      .format(0, 0)
+                      .toString()
+                      .replace(",", ".")}
                     ,-
                   </h6>
                 </Col>

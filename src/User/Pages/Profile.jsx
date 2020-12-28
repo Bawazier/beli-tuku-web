@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import {  useHistory } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import {
   Container,
@@ -11,13 +11,13 @@ import {
   CardTitle,
   CardText,
   CardBody,
+  Spinner,
   Modal,
   ModalBody,
   ModalHeader,
 } from "reactstrap";
 import numeral from "numeral";
 import {
-  FaEdit,
   FaUserCircle,
   FaMapMarkerAlt,
   FaWpforms,
@@ -44,9 +44,7 @@ const Profile = () => {
   const { data, isLoading, isGetError } = useSelector((state) => state.account);
   const {
     dataList,
-    isTopupCreditLoading,
     isListTopupError,
-    isTopupCreditError,
   } = useSelector((state) => state.topup);
   const address = useSelector((state) => state.address);
   const order = useSelector((state) => state.order);
@@ -65,6 +63,7 @@ const Profile = () => {
     dispatch(addressActions.listAddress(auth.token));
     dispatch(transactionActions.listOrder(auth.token));
     dispatch(transactionActions.listTopup(auth.token));
+    window.scrollTo(0, 0);
   }, []);
 
   const topup = async (id) => {
@@ -332,6 +331,22 @@ const Profile = () => {
                 </CardBody>
               </Card>
             )}
+            {(isLoading ||
+              order.isLoading ||
+              address.isLoading) && (
+                <Card body>
+                  <CardBody className="d-flex align-items-center justify-content-center">
+                    <Spinner
+                      style={{
+                        width: "5rem",
+                        height: "5rem",
+                        color: "#1bc29b",
+                      }}
+                      type="grow"
+                    />
+                  </CardBody>
+                </Card>
+              )}
           </Col>
         </Row>
       </styles.Container>

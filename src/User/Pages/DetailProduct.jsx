@@ -53,6 +53,7 @@ const DetailProduct = () => {
     } else {
       dispatch(HomeActions.detailProduct(id));
       dispatch(HomeActions.detailProductReviews(id));
+      window.scrollTo(0, 0);
     }
   }, []);
 

@@ -13,6 +13,11 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
+  Spinner,
+  Modal,
+  ModalFooter,
+  ModalBody,
+  Button,
 } from "reactstrap";
 
 //Components
@@ -130,8 +135,8 @@ const Catalog = () => {
               </Col>
               <Col xs={6}>
                 <h6 className="text-muted text-right">
-                  Showing 1-{pageInfo.dataPerPage} of {Math.ceil(pageInfo.count / 16)}{" "}
-                  results
+                  Showing 1-{pageInfo.dataPerPage} of{" "}
+                  {Math.ceil(pageInfo.count / 16)} results
                 </h6>
               </Col>
             </Row>
@@ -150,6 +155,29 @@ const Catalog = () => {
                     />
                   </Col>
                 ))}
+              {isLoading && (
+                <Col
+                  xs={12}
+                  className="d-flex align-items-center justify-content-center"
+                >
+                  <Spinner
+                    style={{ width: "5rem", height: "5rem", color: "#1bc29b" }}
+                    type="grow"
+                  />
+                </Col>
+              )}
+              {isError && (
+                <Modal isOpen={true}>
+                  <ModalBody className="text-danger font-weight-bold text-center h5">
+                    404 Not Found
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="secondary" onClick={() => history.goBack()}>
+                      GO BACK
+                    </Button>
+                  </ModalFooter>
+                </Modal>
+              )}
             </Row>
             <Row className="justify-content-end">
               <Col xs={12}>

@@ -11,6 +11,7 @@ import {
   Input,
   UncontrolledCarousel,
   Button,
+  Spinner,
 } from "reactstrap";
 
 //Components
@@ -38,6 +39,7 @@ const Home = () => {
     if(auth.token.length){
       dispatch(accountActions.getAccount(auth.token));
     }
+    window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
@@ -118,7 +120,7 @@ const Home = () => {
           </Col>
         </styles.ContainerRow>
         <styles.SectionRow>
-          <Col xs={2} className="pl-0 ml-0">
+          <Col xs={3} className="p-0 m-0">
             <styles.Secion>NEW PRODUCTS</styles.Secion>
           </Col>
           <Col xs={1} className="p-0 m-0">
@@ -142,6 +144,17 @@ const Home = () => {
                 />
               </Col>
             ))}
+          {listNewProducts.isLoading && (
+            <Col
+              xs={12}
+              className="d-flex align-items-center justify-content-center"
+            >
+              <Spinner
+                style={{ width: "5rem", height: "5rem", color: "#1bc29b" }}
+                type="grow"
+              />
+            </Col>
+          )}
         </Row>
         <styles.SectionRow>
           <Col xs={3} className="p-0 m-0">
@@ -168,6 +181,17 @@ const Home = () => {
                 />
               </Col>
             ))}
+          {listPopularProducts.isLoading && (
+            <Col
+              xs={12}
+              className="d-flex align-items-center justify-content-center"
+            >
+              <Spinner
+                style={{ width: "5rem", height: "5rem", color: "#1bc29b" }}
+                type="grow"
+              />
+            </Col>
+          )}
         </Row>
       </styles.Container>
     </>
