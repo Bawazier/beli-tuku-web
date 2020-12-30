@@ -19,7 +19,7 @@ const TableCart = (props) => {
 
   const handleDelete = async (idCart) => {
     await dispatch(transactionActions.deleteCart(auth.token, idCart));
-    dispatch(transactionActions.deleteDataCart(idCart));
+    await dispatch(transactionActions.deleteDataCart(idCart));
     dispatch(transactionActions.listCart(auth.token));
   };
 
@@ -38,9 +38,11 @@ const TableCart = (props) => {
           !isListCartError &&
           dataListCart.map((item, index) => (
             <BodyTable
+              index={index}
               idCart={item.id}
               picture={item.DetailProduct.ProductImage.picture}
               name={item.DetailProduct.Product.name}
+              price={item.DetailProduct.Product.price}
               quantity={item.quantity}
               totalPrice={item.totalPrice}
               handleDelete={() => handleDelete(item.id)}
@@ -54,26 +56,27 @@ const TableCart = (props) => {
 
 const BodyTable = (props) => {
   const { REACT_APP_API_URL } = process.env;
-  const { dataListCart } = useSelector(
-    (state) => state.cart
-  );
   const quantityCounter = useSelector((state) => state.quantityCounter);
   const [quantity, setQuantity] = useState(props.quantity);
   const dispatch = useDispatch();
-  const price = props.totalPrice * quantity;
+  const price = props.price * quantity;
 
   useEffect(() => {
+    console.log(props.index);
+    if(props.index === 0){
+      dispatch(transactionActions.returnDataCart());
+    }
     dispatch(
       transactionActions.dataCart(props.idCart, {
         id: props.idCart,
         content: {
-          quantity: quantity || 1,
-          price: price,
+          quantity: props.quantity,
+          price: props.price * props.quantity,
         },
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataListCart]);
+  }, []);
 
   const increment = async () => {
     if (quantity < props.stock) {
@@ -82,9 +85,7 @@ const BodyTable = (props) => {
         transactionActions.increment(props.idCart, {
           content: {
             quantity: quantityCounter.data[props.idCart].content.quantity + 1,
-            price:
-              props.totalPrice *
-              (quantityCounter.data[props.idCart].content.quantity + 1),
+            price: props.price + quantityCounter.data[props.idCart].content.price,
           },
         })
       );
@@ -94,13 +95,12 @@ const BodyTable = (props) => {
   const decrement = async () => {
     if (quantity > 1) {
       await setQuantity(quantity - 1);
+      console.log(props.totalPrice)
       dispatch(
         transactionActions.decrement(props.idCart, {
           content: {
             quantity: quantityCounter.data[props.idCart].content.quantity - 1,
-            price:
-              quantityCounter.data[props.idCart].content.price -
-              props.totalPrice,
+            price: quantityCounter.data[props.idCart].content.price - props.price,
           },
         })
       );

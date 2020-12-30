@@ -290,7 +290,7 @@ const Checkout = () => {
                             <Col xs={4}>
                               <h6 className="text-right font-weight-bold">
                                 Rp.
-                          {numeral(item.totalPrice * item.quantity)
+                          {numeral(item.DetailProduct.Product.price * item.quantity)
                                   .format(0, 0)
                                   .toString()
                                   .replace(",", ".")}
