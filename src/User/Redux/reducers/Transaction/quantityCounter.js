@@ -80,6 +80,7 @@ export default (state = initialState, action) => {
         exId: [],
         exData: {},
         exTotalAmount: 0,
+        totalAmount: 0,
       };
     }
     default: {
