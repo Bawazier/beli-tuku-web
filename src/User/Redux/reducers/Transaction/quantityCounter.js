@@ -48,13 +48,12 @@ export default (state = initialState, action) => {
       const filterId = state.id.filter((item) => {
         return item !== action.id;
       });
-      const price = state.data[action.id].content.price;
       delete state.data[action.id];
       return {
         ...state,
         id: filterId,
         data: state.data,
-        totalAmount: state.totalAmount - price,
+        totalAmount: 0,
       };
     }
     case 'PARSING_DATA': {
